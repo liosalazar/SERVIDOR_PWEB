@@ -17,7 +17,7 @@ function PanelUsuario() {
       navigate("/iniciar-sesion");
     } else {
       // Si hay un usuario activo, hacer una solicitud al backend para obtener los datos completos
-      fetch("http://localhost:5000/api/users/me", {
+      fetch("http://localhost:3001/api/users/me", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

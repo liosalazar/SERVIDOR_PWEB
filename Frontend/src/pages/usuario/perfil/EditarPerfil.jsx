@@ -39,7 +39,7 @@ export default function EditarPerfil() {
 
     try {
       // Realizar la actualización en el backend
-      const response = await fetch("http://localhost:5000/api/users/me", {
+      const response = await fetch("http://localhost:3001/api/users/me", {
         method: "PUT", // Usamos PUT para actualizar los datos
         headers: {
           "Content-Type": "application/json",

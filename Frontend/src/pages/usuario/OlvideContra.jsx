@@ -23,7 +23,7 @@ export default function OlvideContra() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/users/send-code", {
+      const response = await fetch("http://localhost:3001/api/users/send-code", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,7 +48,7 @@ export default function OlvideContra() {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:5000/api/users/verify-code", {
+      const response = await fetch("http://localhost:3001/api/users/verify-code", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -78,7 +78,7 @@ export default function OlvideContra() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/users/reset-password", {
+      const response = await fetch("http://localhost:3001/api/users/reset-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
