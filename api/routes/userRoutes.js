@@ -10,6 +10,19 @@ const pool = new Pool({
 // Ruta para registrar un nuevo usuario
 router.post('/register', async (req, res) => {
   const { nombre, correo, pais, celular, contra } = req.body;
+  const isMatch = await bcrypt.compare(contra, user.contra);
+
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Contraseña incorrecta' });
+    }
+
+    // Crear un JWT para el usuario que ha iniciado sesión
+    const token = jwt.sign(
+      // 🚨 CAMBIO CRÍTICO: Incluir el rol en el token
+      { id: user.id, correo: user.correo, rol: user.rol }, // <-- MODIFICADO
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' } 
+    );
 
   // Validar la entrada
   if (!nombre || !correo || !pais || !celular || !contra) {
@@ -57,6 +70,19 @@ router.post('/register', async (req, res) => {
 // Ruta para login de usuario
 router.post('/login', async (req, res) => {
   const { correo, contra } = req.body;
+  const isMatch = await bcrypt.compare(contra, user.contra);
+
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Contraseña incorrecta' });
+    }
+
+    // Crear un JWT para el usuario que ha iniciado sesión
+    const token = jwt.sign(
+      // 🚨 CAMBIO CRÍTICO: Incluir el rol en el token
+      { id: user.id, correo: user.correo, rol: user.rol }, // <-- MODIFICADO
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' } 
+    );
 
   if (!correo || !contra) {
     return res.status(400).json({ message: 'Correo y contraseña son requeridos' });
