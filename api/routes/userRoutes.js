@@ -1,8 +1,9 @@
-const express = require('express');
-const router = express.Router();
-const { Pool } = require('pg');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+import { Router } from 'express';  // Usamos import en lugar de require
+import { Pool } from 'pg';  // Usamos import en lugar de require
+import bcrypt from 'bcrypt';  // Usamos import en lugar de require
+import jwt from 'jsonwebtoken';  // Usamos import en lugar de require
+
+const router = Router();
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL, // Asegúrate de tener la URL de la base de datos en .env
 });
@@ -132,4 +133,4 @@ router.get('/', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;  // Usamos export default para exportar el router

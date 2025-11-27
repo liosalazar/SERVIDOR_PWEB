@@ -1,0 +1,92 @@
+.footer {
+    background-color: #f8f8f8;
+    color: #333;
+    text-align: center;
+    padding: 1.5rem 1rem;
+    font-size: 0.95rem;
+    border-top: 1px solid #e0e0e0;
+    position: relative;
+    /* ← Añade esto */
+    z-index: 1000;
+    /* ← Mayor que el sidebar */
+}
+
+.footer a {
+    color: #9f9fff;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+.footerContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footerSection {
+    flex: 1 1 250px;
+}
+
+.footerSection h4 {
+    font-size: 1.1rem;
+    margin-bottom: 0.8rem;
+    color: #000;
+}
+
+.footerSection p {
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.footerSection ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footerSection ul li {
+    margin-bottom: 0.4rem;
+}
+
+.footerSection a {
+    text-decoration: none;
+    color: #333;
+    font-size: 0.9rem;
+}
+
+.footerSection a:hover {
+    color: #007bff;
+}
+
+.socialLinks {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.socialLinks img {
+    width: 28px;
+    height: 28px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    filter: grayscale(20%)
+}
+
+.socialLinks img:hover {
+    transform: scale(1.1);
+    filter: none;
+    opacity: 0.9;
+}
+
+.footerBottom {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.85rem;
+    color: #777;
+    border-top: 1px solid #e0e0e0;
+    padding-top: 0.8rem;
+}

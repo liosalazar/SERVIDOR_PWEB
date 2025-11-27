@@ -1,8 +1,8 @@
-const express = require('express');
-const router = express.Router();
+import { Router } from 'express';
+import { Pool } from 'pg';
 
-// Simulamos la interacción con la base de datos
-const { Pool } = require('pg');
+const router = Router();
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
@@ -34,4 +34,4 @@ router.post('/', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router; // Exportamos el router como un módulo ES

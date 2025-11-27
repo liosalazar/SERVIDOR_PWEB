@@ -1,6 +1,10 @@
-const express = require('express');
-const cors = require('cors');
-require('dotenv').config(); // Cargar las variables de entorno
+// index.js
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import { Pool } from 'pg';
+
+dotenv.config();
 
 const app = express();
 
@@ -8,27 +12,28 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Importar rutas
-const productRoutes = require('./routes/productRoutes');
-const categoryRoutes = require('./routes/categoryRoutes');
-const userRoutes = require('./routes/userRoutes'); // Asegúrate de que esta línea solo aparezca una vez
+// Rutas
+import productRoutes from './routes/productRoutes.js';
+import categoryRoutes from './routes/categoryRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
-// Usar rutas
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
-app.use('/api/users', userRoutes); // Agregar la ruta de login de usuarios
+app.use('/api/users', userRoutes);
 
-// Conectar a la base de datos
-const { Pool } = require('pg');
+// Conectar a la base de datos PostgreSQL
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL, // Leer la URL de la base de datos desde .env
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false, // Si es necesario, desactiva la validación completa del certificado
+  },
 });
 
 pool.connect()
-  .then(() => console.log('Conectado a la base de datos PostgreSQL'))
+  .then(() => console.log('Conexión a la base de datos PostgreSQL exitosa'))
   .catch((err) => console.error('Error de conexión:', err));
 
-// Definir el puerto
+// Iniciar el servidor
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);

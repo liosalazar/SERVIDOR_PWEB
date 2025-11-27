@@ -1,0 +1,114 @@
+/* Carrito.css */
+
+/* Contenedor principal */
+.contenedor-carrito {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: #f3f4f6;
+  font-family: 'Inter', sans-serif;
+  padding: 2rem;
+}
+
+/* Caja principal de cada producto */
+.carrito-item {
+  background-color: #ffffff;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 1rem;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.carrito-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+}
+
+/* Títulos de productos */
+.carrito-item h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+/* Detalles de cantidad y subtotal */
+.carrito-item p {
+  font-size: 0.95rem;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* Botón eliminar */
+.carrito-item button {
+  align-self: flex-start;
+  padding: 0.5rem 1rem;
+  background-color: #ef4444;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.carrito-item button:hover {
+  background-color: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Total del carrito */
+.carrito-total {
+  max-width: 500px;
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: 1rem;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #1f2937;
+}
+
+/* Botón finalizar compra */
+.finalizar-compra {
+  max-width: 500px;
+  width: 100%;
+  padding: 0.75rem 0;
+  margin-top: 1rem;
+  background-color: #facc15;
+  color: #111;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.finalizar-compra:hover {
+  background-color: #f59e0b;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Mensajes */
+.mensaje-carrito {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #16a34a;
+  margin-top: 1rem;
+}

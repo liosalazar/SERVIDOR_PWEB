@@ -1,0 +1,81 @@
+/* MisOrdenes.css */
+.misordenes-container {
+  padding: 2rem;
+}
+.misordenes-box {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+.misordenes-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+.misordenes-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.misordenes-table th, .misordenes-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #ddd;
+}
+.orden-completada { color: green; font-weight: bold; }
+.orden-proceso { color: orange; font-weight: bold; }
+.orden-cancelada { color: red; font-weight: bold; }
+.misordenes-link { color: #2563eb; text-decoration: none; }
+.misordenes-paginacion button {
+  margin: 0.25rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: #eee;
+  cursor: pointer;
+}
+.misordenes-paginacion .activo {
+  background-color: #2563eb;
+  color: white;
+}
+.misordenes-back {
+  margin-top: 1rem;
+}
+
+/* DetalleOrden.css */
+.detalleorden-container {
+  padding: 2rem;
+}
+.detalleorden-box {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  max-width: 500px;
+  margin: auto;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+.detalleorden-box h2 {
+  margin-bottom: 1rem;
+}
+.detalleorden-box p {
+  margin: 0.5rem 0;
+}
+.detalleorden-box ul {
+  margin-top: 1rem;
+  padding-left: 1rem;
+}
+.btn-cancelar {
+  margin-top: 1rem;
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.detalleorden-back {
+  margin-top: 1rem;
+}
+.misordenes-table th,
+.misordenes-table td {
+  text-align: center;
+  padding: 0.75rem;
+  border-bottom: 1px solid #ddd;
+}

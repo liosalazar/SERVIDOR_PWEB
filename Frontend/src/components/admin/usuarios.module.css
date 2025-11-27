@@ -1,0 +1,32 @@
+.container {
+  padding: 20px;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.tabla th, .tabla td {
+  padding: 10px;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
+.activo {
+  color: #16a34a;
+  font-weight: 500;
+}
+
+.inactivo {
+  color: #dc2626;
+  font-weight: 500;
+}
+
+.detalle {
+  margin-top: 20px;
+  background: #f3f4f6;
+  padding: 15px;
+  border-radius: 10px;
+}

@@ -1,0 +1,113 @@
+.productDetail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.imageContainer {
+    width: 100%;
+    max-width: 420px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.productImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.productInfo {
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.productName {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #222;
+}
+
+.category {
+    color: #666;
+    margin: 0.4rem 0;
+}
+
+.price {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #6c63ff;
+    margin: 0.8rem 0;
+}
+
+.description {
+    font-size: 1rem;
+    color: #444;
+    margin: 1rem 0 1.5rem;
+    line-height: 1.5;
+}
+
+.cartButton {
+    background: linear-gradient(135deg, #6c63ff, #4f46e5);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.cartButton:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #5a53e2, #4338ca);
+}
+
+/* === Productos relacionados === */
+.relatedSection {
+    width: 100%;
+    margin-top: 3rem;
+    text-align: center;
+}
+
+.relatedSection h2 {
+    font-size: 1.4rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+}
+
+.relatedGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+}
+
+.relatedCard {
+    text-decoration: none;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.relatedCard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+.relatedCard img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.relatedCard p {
+    color: #333;
+    font-weight: 500;
+    padding: 0.6rem;
+}

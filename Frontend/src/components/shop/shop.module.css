@@ -1,0 +1,351 @@
+/* === Banner Carousel === */
+.bannerCarousel {
+    position: relative;
+    margin-bottom: 3rem;
+    overflow: hidden;
+    width: 100%;
+    height: 340px;
+}
+
+.bannerImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.65);
+    transition: opacity 0.8s ease-in-out;
+}
+
+.bannerContent {
+    position: absolute;
+    top: 50%;
+    left: 8%;
+    transform: translateY(-50%);
+    color: #fff;
+    max-width: 500px;
+}
+
+.bannerTitle {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+}
+
+.bannerSubtitle {
+    font-size: 1.1rem;
+    margin-bottom: 1.2rem;
+}
+
+.bannerButton {
+    background-color: #6c63ff;
+    color: #fff;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.bannerButton:hover {
+    background-color: #5a53e2;
+    transform: translateY(-2px);
+}
+
+/* === Flechas de navegación === */
+.navButton {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+    border: none;
+    color: #fff;
+    font-size: 2.5rem;
+    cursor: pointer;
+    width: 38px;
+    height: 38px;
+    transition: transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navButton:hover {
+    transform: scale(1.15);
+}
+
+.leftArrow {
+    left: 15px;
+}
+
+.rightArrow {
+    right: 15px;
+}
+
+/* === Indicadores de posición (dots) === */
+.dotsContainer {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.5rem;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.activeDot {
+    background-color: #fff;
+    transform: scale(1.2);
+}
+
+/* === Category Card === */
+.categoryCard {
+    background-color: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.categoryCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+.categoryImage {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.categoryContent {
+    padding: 1rem;
+    text-align: center;
+}
+
+.categoryTitle {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.4rem;
+}
+
+.categoryDescription {
+    font-size: 0.95rem;
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+.categoryButton {
+    display: inline-block;
+    background: linear-gradient(135deg, #6c63ff, #4f46e5);
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: 10px;
+    font-weight: 500;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.categoryButton:hover {
+    background: linear-gradient(135deg, #5a53e2, #4338ca);
+    transform: translateY(-2px);
+}
+
+/* === Featured Categories === */
+.featuredCategories {
+    padding: 3rem 2rem;
+    text-align: center;
+    background-color: #fafafa;
+}
+
+.sectionTitle {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.sectionTitle::after {
+    content: "";
+    display: block;
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(135deg, #6c63ff, #4f46e5);
+    margin: 0.6rem auto 0;
+    border-radius: 2px;
+}
+
+.categoryGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+    justify-items: center;
+}
+
+/* === Product Card === */
+.productCard {
+    background-color: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    width: 100%;
+    max-width: 280px;
+}
+
+.productCard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+.productImage {
+    width: 100%;
+    height: 200px;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+}
+
+.productInfo {
+    padding: 1rem;
+    text-align: center;
+}
+
+.productName {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.3rem;
+}
+
+.productCategory {
+    font-size: 0.9rem;
+    color: #777;
+    margin-bottom: 0.4rem;
+}
+
+.productPrice {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #4f46e5;
+    margin-bottom: 0.8rem;
+}
+
+.productActions {
+    display: flex;
+    justify-content: center;
+    gap: 0.6rem;
+}
+
+.detailsButton {
+    background-color: transparent;
+    border: 1.5px solid #6c63ff;
+    color: #6c63ff;
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+
+.detailsButton:hover {
+    background-color: #6c63ff;
+    color: #fff;
+}
+
+.cartButton {
+    background: linear-gradient(135deg, #6c63ff, #4f46e5);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.45rem 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.cartButton:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(135deg, #5a53e2, #4338ca);
+}
+
+/* === Best Sellers === */
+.bestSellers {
+    padding: 3rem 2rem;
+    text-align: center;
+    background-color: #ffffff;
+}
+
+.productGrid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(260px, 1fr));
+    gap: 2rem;
+    justify-items: center;
+    margin-top: 2rem;
+    padding: 0 2rem;
+}
+
+/* === New Categories === */
+.newCategories {
+    border-top: 2px solid #eee;
+    padding: 3rem 2rem;
+    text-align: center;
+    background-color: #fafafa;
+}
+
+/* === New Products === */
+.newProducts {
+    padding: 3rem 2rem;
+    text-align: center;
+    background-color: #ffffff;
+    border-top: 2px solid #eee;
+}
+
+.newProductGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(260px, 1fr));
+    gap: 2rem;
+    justify-items: center;
+    margin-top: 2rem;
+    padding: 0 2rem;
+}
+.mensajeExito {
+  margin-top: 10px;
+  color: #28a745;
+  font-weight: bold;
+  background-color: #e6ffe6;
+  border: 1px solid #28a745;
+  padding: 5px 10px;
+  border-radius: 8px;
+  text-align: center;
+  animation: fadeOut 2s ease forwards;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

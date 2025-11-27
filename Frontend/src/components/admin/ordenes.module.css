@@ -1,0 +1,24 @@
+.container {
+  padding: 20px;
+}
+
+.filtros {
+  margin-bottom: 15px;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla th, .tabla td {
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+.detalle {
+  margin-top: 20px;
+  background: #f9fafb;
+  padding: 15px;
+  border-radius: 10px;
+}

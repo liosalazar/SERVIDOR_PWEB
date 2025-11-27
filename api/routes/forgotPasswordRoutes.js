@@ -1,9 +1,10 @@
-const express = require('express');
-const router = express.Router();
-const { Pool } = require('pg');
-const nodemailer = require('nodemailer');
+import { Router } from 'express';  // Usamos import en lugar de require
+import { Pool } from 'pg';  // Usamos import en lugar de require
+import nodemailer from 'nodemailer';  // Usamos import en lugar de require
+
+const router = Router();
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: process.env.DATABASE_URL, // Usar la URL desde el .env
 });
 
 // Enviar código al correo
@@ -17,7 +18,7 @@ router.post('/send-code', async (req, res) => {
 
   const codigo = Math.random().toString(36).substring(2, 8).toUpperCase();
 
-  // Enviar el código por correo (configura tu servicio de correo aquí)
+  // Enviar el código por correo
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -37,7 +38,7 @@ router.post('/send-code', async (req, res) => {
     if (error) {
       return res.status(500).json({ message: 'Error al enviar el correo' });
     }
-    // Guardar el código en la base de datos (o usar un sistema más seguro)
+    // Guardar el código en la base de datos
     pool.query('UPDATE users SET recovery_code = $1 WHERE correo = $2', [codigo, email]);
     res.status(200).json({ message: 'Código enviado al correo' });
   });
@@ -74,4 +75,4 @@ router.post('/reset-password', async (req, res) => {
   res.status(200).json({ message: 'Contraseña actualizada con éxito' });
 });
 
-module.exports = router;
+export default router;  // Usamos export default para exportar el router

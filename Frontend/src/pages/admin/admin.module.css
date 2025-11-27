@@ -1,0 +1,47 @@
+.dashboard {
+    padding: 3rem 2rem;
+    text-align: center;
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    color: #666;
+    font-size: 1rem;
+    margin-bottom: 2rem;
+}
+
+.buttonsContainer {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.adminButton {
+    background: linear-gradient(135deg, #6c63ff, #4f46e5);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.adminButton:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #5a53e2, #4338ca);
+}
+
+.notAllowed {
+    padding: 3rem;
+    text-align: center;
+    color: #555;
+}
