@@ -1,23 +1,23 @@
-// userRoutes.js
+// routes/userRoutes.js
 import { Router } from 'express'; 
-import pool from '../db.js'; // Importamos el pool centralizado
+import pool from '../db.js'; 
 import bcrypt from 'bcrypt'; 
 import jwt from 'jsonwebtoken'; 
 
-const router = Router();
-// Eliminamos la inicialización duplicada de 'pool' aquí.
+// Importamos los middlewares de autenticación
+import { verifyToken } from '../middlewares/authMiddleware.js'; 
 
-// Ruta para registrar un nuevo usuario
+const router = Router();
+
+// --- Ruta para registrar un nuevo usuario ---
 // URL: POST /api/users/registro
 router.post('/registro', async (req, res) => {
-  // ... (el resto de la lógica de registro es correcta)
     const { nombre, correo, pais, celular, contra } = req.body;
-    // ... [Validaciones]
+    // ... [Validaciones omitidas por simplicidad]
     const checkUserQuery = 'SELECT * FROM users WHERE correo = $1';
-    const checkUserValues = [correo];
 
     try {
-        const existingUser = await pool.query(checkUserQuery, checkUserValues);
+        const existingUser = await pool.query(checkUserQuery, [correo]);
         if (existingUser.rows.length > 0) {
             return res.status(400).json({ message: 'El correo ya está registrado' });
         }
@@ -25,17 +25,16 @@ router.post('/registro', async (req, res) => {
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(contra, saltRounds);
 
+        // NOTA: 'rol' por defecto es 'cliente' en la BD, no se inserta aquí.
         const insertUserQuery = `
           INSERT INTO users (nombre, correo, pais, celular, contra)
-          VALUES ($1, $2, $3, $4, $5) RETURNING id, nombre, correo, pais, celular
+          VALUES ($1, $2, $3, $4, $5) RETURNING id, nombre, correo, pais, celular, rol
         `;
-        const insertUserValues = [nombre, correo, pais, celular, hashedPassword];
-
-        const result = await pool.query(insertUserQuery, insertUserValues);
+        const result = await pool.query(insertUserQuery, [nombre, correo, pais, celular, hashedPassword]);
         const newUser = result.rows[0];
 
         const token = jwt.sign(
-            { id: newUser.id, correo: newUser.correo },
+            { id: newUser.id, correo: newUser.correo, rol: newUser.rol }, // Adjuntamos el rol
             process.env.JWT_SECRET,
             { expiresIn: '1h' } 
         );
@@ -47,12 +46,10 @@ router.post('/registro', async (req, res) => {
     }
 });
 
-// Ruta para login de usuario
+// --- Ruta para login de usuario ---
 // URL: POST /api/users/iniciar-sesion
 router.post('/iniciar-sesion', async (req, res) => {
-    // ... (la lógica de login es correcta)
     const { correo, contra } = req.body;
-    // ... [Validaciones]
 
     try {
         const checkUserQuery = 'SELECT * FROM users WHERE correo = $1';
@@ -70,7 +67,7 @@ router.post('/iniciar-sesion', async (req, res) => {
         }
 
         const token = jwt.sign(
-            { id: user.id, correo: user.correo },
+            { id: user.id, correo: user.correo, rol: user.rol }, // Adjuntamos el rol
             process.env.JWT_SECRET,
             { expiresIn: '1h' } 
         );
@@ -82,6 +79,15 @@ router.post('/iniciar-sesion', async (req, res) => {
     }
 });
 
-// ... (El resto de las rutas /me y / son correctas)
+// --- RUTA NUEVA: Obtener perfil del usuario autenticado ---
+// URL: GET /api/users/me
+router.get('/me', verifyToken, (req, res) => {
+    // Si llegamos aquí, el middleware verifyToken pasó.
+    // req.user contiene { id, correo, rol } del token.
+    res.status(200).json({
+        message: 'Datos del usuario autenticado',
+        user: req.user
+    });
+});
 
 export default router;
