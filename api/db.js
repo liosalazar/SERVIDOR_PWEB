@@ -1,17 +1,13 @@
-import { Client } from 'pg';
-import fs from 'fs';
+// db.js
+import { Pool } from 'pg';
+// No necesitamos dotenv si dependemos de las variables de Azure
 
-const conn = new Client({
-  host: 'supermarketserver.postgres.database.azure.com',
-  user: 'julitodev',
-  password: 'tu_contraseña_real_aqui',
-  database: 'postgres',
-  port: 5432,
-  ssl: true // Desactiva SSL temporalmente para probar la conexión sin él
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  // Esta es la configuración estándar para conexiones externas a Azure PG:
+  ssl: { 
+    rejectUnauthorized: false 
+  },
 });
 
-conn.connect()
-  .then(() => console.log('Conexión exitosa a PostgreSQL'))
-  .catch((err) => console.error('Error de conexión:', err));
-
-export default conn;
+export default pool;
