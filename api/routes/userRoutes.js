@@ -9,7 +9,7 @@ const pool = new Pool({
 });
 
 // Ruta para registrar un nuevo usuario
-router.post('/register', async (req, res) => {
+router.post('/registro', async (req, res) => {
   const { nombre, correo, pais, celular, contra } = req.body;
 
   // Validar la entrada
