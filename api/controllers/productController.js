@@ -27,6 +27,16 @@ const getProductById = async (req, res) => {
   }
 };
 
+// Obtener los más vendidos (12)
+const getBestSellers = async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM products ORDER BY sales DESC LIMIT 12');
+    res.status(200).json(result.rows);
+  } catch (error) {
+    res.status(500).send(`Error al obtener los best sellers: ${error}`);
+  }
+};
+
 // Crear un nuevo producto
 const createProduct = async (req, res) => {
   const { name, description, price, image, categoryId } = req.body;
@@ -59,4 +69,4 @@ const updateProduct = async (req, res) => {
   }
 };
 
-module.exports = { getAllProducts, getProductById, createProduct, updateProduct };
+module.exports = { getAllProducts, getProductById, getBestSellers, createProduct, updateProduct };
