@@ -9,9 +9,8 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors({
-  origin: 'http://localhost:5173', // Cambia este valor si el frontend corre en otro puerto
-}));app.use(express.json());
+app.use(cors({}));
+app.use(express.json());
 
 // Rutas
 import productRoutes from './routes/productRoutes.js';
@@ -25,19 +24,22 @@ app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes); 
 
 // Conectar a la base de datos PostgreSQL
-const pool = new Pool({
+const pool = new Pool({ 
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false, // Si es necesario, desactiva la validación completa del certificado
-  },
+  ssl: { rejectUnauthorized: false }, 
 });
 
-pool.connect()
-  .then(() => console.log('Conexión a la base de datos PostgreSQL exitosa'))
-  .catch((err) => console.error('Error de conexión:', err));
-
-// Iniciar el servidor
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en el puerto ${PORT}`);
-});
+
+// Iniciar el servidor SOLO después de conectarse a la DB
+try {
+  await pool.connect();
+  console.log('Conexión a la base de datos PostgreSQL exitosa');
+  
+  app.listen(PORT, () => {
+    console.log(`Servidor corriendo en el puerto ${PORT}`);
+  });
+} catch (err) {
+  console.error('Error de conexión:', err);
+  process.exit(1); // Sale si la DB no está lista
+}
