@@ -39,7 +39,10 @@ jobs:
           path: |
             api/
             frontend/dist/
-
+      - name: List directory content (debugging)
+        run: |
+          ls -R ./Frontend/dist
+        
   deploy:
     runs-on: ubuntu-latest
     needs: build
@@ -66,7 +69,7 @@ jobs:
         with:
           app-name: 'test1serverapi'
           slot-name: 'Production'
-          package: 'Frontend\dist'
+          package: './Frontend/dist'
 
       - name: Deploy Backend to Azure Web App
         uses: azure/webapps-deploy@v3
