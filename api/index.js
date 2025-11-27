@@ -9,8 +9,9 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
-app.use(express.json());
+app.use(cors({
+  origin: 'http://localhost:5173', // Cambia este valor si el frontend corre en otro puerto
+}));app.use(express.json());
 
 // Rutas
 import productRoutes from './routes/productRoutes.js';
