@@ -6,9 +6,8 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@components': '/src/components',  // alias para la carpeta de componentes
-      '@pages': '/src/pages',  // alias para la carpeta de páginas
-      '@assets': '/src/assets', // alias para la carpeta de assets
-    }
-  }
+      '@components': '/src/components',
+      '@pages': '/src/pages',
+    },
+  },
 });

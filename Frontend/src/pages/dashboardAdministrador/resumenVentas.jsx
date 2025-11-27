@@ -1,4 +1,4 @@
-import GraficoBarras from "../../components/dashboardComponents/graficoBarras";
+import GraficoBarras from '@components/dashboardComponents/GraficoBarras';
 
 const resumenVentas = () => {
     return(
