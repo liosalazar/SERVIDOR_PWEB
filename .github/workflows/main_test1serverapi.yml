@@ -61,10 +61,6 @@ jobs:
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_077601E2D35B46F394D431DF7EE5DDB2 }}
 
 
-      - name: List files in Frontend/dist (debugging)
-        run: |
-          ls -al ./Frontend/dist
-        
       - name: Deploy Frontend to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
