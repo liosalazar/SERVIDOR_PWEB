@@ -56,7 +56,7 @@ router.post('/register', async (req, res) => {
 });
 
 // Ruta para login de usuario
-router.post('/login', async (req, res) => {
+router.post('/iniciar-sesion', async (req, res) => {
   const { correo, contra } = req.body;
 
   if (!correo || !contra) {
