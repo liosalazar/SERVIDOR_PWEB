@@ -15,7 +15,7 @@ function Registro() {
   const [confirmarContra, setConfirmarContra] = useState("");
   const [mensaje, setMensaje] = useState("");
   const navigate = useNavigate();
-
+  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -30,7 +30,7 @@ function Registro() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/users/register", {
+      const response = await fetch(`api/users/registro`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
