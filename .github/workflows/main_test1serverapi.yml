@@ -65,7 +65,7 @@ jobs:
         with:
           app-name: 'test1serverapi'
           slot-name: 'Production'
-          package: ./Frontend/dist
+          package: './Frontend/dist'
 
       - name: Deploy Backend to Azure Web App
         uses: azure/webapps-deploy@v3
@@ -73,3 +73,7 @@ jobs:
           app-name: 'test1serverapi'
           slot-name: 'Production'
           package: ./api
+      
+      - name: List directory content (debugging)
+        run: |
+          ls -R ./Frontend
