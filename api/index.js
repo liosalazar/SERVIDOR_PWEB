@@ -1,3 +1,6 @@
+import { producto } from './models/producto';
+import { categoria } from './models/categoria';
+
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config(); // Cargar las variables de entorno
@@ -20,6 +23,7 @@ app.use('/api/users', userRoutes); // Agregar la ruta de login de usuarios
 
 // Conectar a la base de datos
 const { Pool } = require('pg');
+const { sequelize } = require('./db');
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL, // Leer la URL de la base de datos desde .env
 });
@@ -27,6 +31,24 @@ const pool = new Pool({
 pool.connect()
   .then(() => console.log('Conectado a la base de datos PostgreSQL'))
   .catch((err) => console.error('Error de conexión:', err));
+
+
+categoria.hasMany(producto, {
+  foreignKey: "categoriaId",
+});
+
+producto.belongsTo(categoria, {
+  foreignKey: "categoriaId",
+});
+
+app.use(cors());
+app.use(express.json());
+
+const productRoutes = require('./routes/productRoutes');
+app.use('/api/models/productos', productRoutes);
+
+const categoriaRoutes = require('./routes/categoriaRoutes');
+app.use('/api/models/categorias', categoriaRoutes);
 
 // Definir el puerto
 const PORT = process.env.PORT || 3001;
