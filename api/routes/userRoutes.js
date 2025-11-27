@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken'; 
 
 // Importamos los middlewares de autenticación
-import { verifyToken } from '../middlewares/authMiddleware.js'; 
+import { verifyToken } from '../middleware/authMiddleware.js';
 
 const router = Router();
 
