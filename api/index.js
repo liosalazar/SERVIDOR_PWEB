@@ -16,10 +16,12 @@ app.use(express.json());
 import productRoutes from './routes/productRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
 
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/admin', adminRoutes); 
 
 // Conectar a la base de datos PostgreSQL
 const pool = new Pool({
