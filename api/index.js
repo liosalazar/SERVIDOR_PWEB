@@ -11,12 +11,14 @@ app.use(express.json());
 // Importar rutas
 const productRoutes = require('./routes/productRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
-const userRoutes = require('./routes/userRoutes'); // Asegúrate de que esta línea solo aparezca una vez
+const userRoutes = require('./routes/userRoutes');
+const adminRoutes = require('./routes/adminRoutes'); 
 
 // Usar rutas
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
-app.use('/api/users', userRoutes); // Agregar la ruta de login de usuarios
+app.use('/api/users', userRoutes);
+app.use('/api/admin', adminRoutes); 
 
 // Conectar a la base de datos
 const { Pool } = require('pg');
