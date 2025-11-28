@@ -46,7 +46,8 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(FRONTEND_BUILD_PATH, 'index.html'));
 });
 
-app.get('*', (req, res) => {
+// Reemplaza app.get('*', ...) con:
+app.get(/^(?!.*\/api).*$/, (req, res) => {
     // Si la URL comienza con /api, y no se ha encontrado, es un error de API (404)
     if (req.url.startsWith('/api')) {
         return res.status(404).json({ message: 'Ruta de API no encontrada.' });
