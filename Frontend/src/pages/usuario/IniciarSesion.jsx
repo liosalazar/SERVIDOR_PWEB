@@ -11,50 +11,54 @@ function IniciarSesion() {
   const handleLogin = (e) => {
     e.preventDefault();
 
-    // Hacer una solicitud al backend para autenticar al usuario
+    // 🛑 CORRECCIÓN: La URL del endpoint DEBE ser '/api/users/iniciar-sesion'
+    // Usamos ruta relativa /api/... para que funcione en producción (Azure Monolito)
     axios
-      .post("http://localhost:3001/api/users/login", {
+      .post("/api/users/iniciar-sesion", { 
         correo: dato,
         contra: contra,
       })
       .then((response) => {
-        // Si la autenticación es exitosa, almacenar el token en el estado
         alert("Inicio de sesión exitoso ✅");
 
-        // Guardar el token en el estado global o en un contexto (mejor que localStorage)
-        // Aquí lo almacenamos en el contexto de estado global (ej. Redux, React Context, etc.)
+        // Asegúrate de que tu AuthContext use esta data.
+        // La data contiene: { token: '...', user: { id:..., rol:'...' } }
         localStorage.setItem("usuarioActivo", JSON.stringify(response.data));
         
         // Redirigir según el rol
         if (response.data.user.rol === "admin") {
-          navigate("/admin/usuarios");
+          // Nota: Asegúrate que esta ruta sea correcta, según App.jsx
+          navigate("/dashboard"); 
         } else {
           navigate("/usuario");
         }
       })
       .catch((error) => {
+        // Mejorar manejo de errores para mostrar el error real si es 400
+        console.error("Error de login:", error.response?.data?.message || error.message);
         alert("Correo o contraseña incorrectos ❌");
       });
   };
 
   return (
+    // ... (El resto del return es el mismo)
     <div className="form-container">
-      <form onSubmit={handleLogin}>
-        <h2>Iniciar sesión</h2>
-        <input
-          type="email"
-          placeholder="Correo electrónico"
-          value={dato}
-          onChange={(e) => setDato(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={contra}
-          onChange={(e) => setContra(e.target.value)}
-        />
-        <button type="submit">Iniciar sesión</button>
-      </form>
+        <form onSubmit={handleLogin}>
+            <h2>Iniciar sesión</h2>
+            <input
+                type="email"
+                placeholder="Correo electrónico"
+                value={dato}
+                onChange={(e) => setDato(e.target.value)}
+            />
+            <input
+                type="password"
+                placeholder="Contraseña"
+                value={contra}
+                onChange={(e) => setContra(e.target.value)}
+            />
+            <button type="submit">Iniciar sesión</button>
+        </form>
     </div>
   );
 }
