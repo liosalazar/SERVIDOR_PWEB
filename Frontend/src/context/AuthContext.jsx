@@ -10,6 +10,13 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem('token') || null);
     const [isLoading, setIsLoading] = useState(false);
 
+    // 🛑 FUNCIÓN AUXILIAR: Establece el token y el usuario en el estado y localStorage
+    const setAuthData = (newToken, userData) => {
+        localStorage.setItem('token', newToken);
+        setToken(newToken);
+        setUser(userData);
+    };
+
     // 2. Función de LOGIN (Llama a tu API de Azure)
     const login = async (correo, contra) => {
         setIsLoading(true);
@@ -27,10 +34,9 @@ export const AuthProvider = ({ children }) => {
 
             const data = await response.json();
             
-            // Guardar token en localStorage y estado
-            localStorage.setItem('token', data.token);
-            setToken(data.token);
-            setUser(data.user); 
+            // 🛑 Usamos la nueva función para centralizar el establecimiento de estado
+            setAuthData(data.token, data.user); 
+            
             setIsLoading(false);
             return data.user;
 
@@ -49,7 +55,6 @@ export const AuthProvider = ({ children }) => {
     };
     
     // 4. Función de verificación de usuario (usando /api/users/me)
-    // Se ejecuta al cargar la aplicación para verificar si el token es válido
     useEffect(() => {
         const verifyUser = async () => {
             if (!token) {
@@ -80,7 +85,8 @@ export const AuthProvider = ({ children }) => {
     }, [token]);
 
     return (
-        <AuthContext.Provider value={{ user, token, isLoading, login, logout }}>
+        // 🛑 Incluimos setAuthData en el valor del contexto
+        <AuthContext.Provider value={{ user, token, isLoading, login, logout, setAuthData }}>
             {children}
         </AuthContext.Provider>
     );

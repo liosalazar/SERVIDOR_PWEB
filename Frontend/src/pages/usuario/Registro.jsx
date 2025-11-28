@@ -2,90 +2,103 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./styles/Formulario.css";
 
+// 🛑 Importar el hook de autenticación
+import { useAuth } from "../../context/AuthContext"; // AJUSTA ESTA RUTA si es necesario
+
 import EtapaPersonal from "../../components/forms/EtapaPersonal";
 import EtapaContra from "../../components/forms/EtapaContra";
 import Mensaje from "../../components/ui/Mensaje";
 
 function Registro() {
-  const [nombre, setNombre] = useState("");
-  const [correo, setCorreo] = useState("");
-  const [pais, setPais] = useState("");
-  const [celular, setCelular] = useState("");
-  const [contra, setContra] = useState("");
-  const [confirmarContra, setConfirmarContra] = useState("");
-  const [mensaje, setMensaje] = useState("");
-  const navigate = useNavigate();
-  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    // 🛑 Obtener la NUEVA función 'setAuthData' del contexto
+    const { setAuthData } = useAuth(); 
+    
+    const [nombre, setNombre] = useState("");
+    const [correo, setCorreo] = useState("");
+    const [pais, setPais] = useState("");
+    const [celular, setCelular] = useState("");
+    const [contra, setContra] = useState("");
+    const [confirmarContra, setConfirmarContra] = useState("");
+    const [mensaje, setMensaje] = useState("");
+    const navigate = useNavigate();
+    // const BACKEND_URL = process.env.REACT_APP_BACKEND_URL; // Eliminado por no usarse
 
-    if (!nombre || !correo || !pais || !celular || !contra || !confirmarContra) {
-      setMensaje("Por favor, completa todos los campos ❌");
-      return;
-    }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-    if (contra !== confirmarContra) {
-      setMensaje("Las contraseñas no coinciden ❌");
-      return;
-    }
+        if (!nombre || !correo || !pais || !celular || !contra || !confirmarContra) {
+            setMensaje("Por favor, completa todos los campos ❌");
+            return;
+        }
 
-    try {
-      const response = await fetch(`api/users/registro`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ nombre, correo, pais, celular, contra }),
-      });
+        if (contra !== confirmarContra) {
+            setMensaje("Las contraseñas no coinciden ❌");
+            return;
+        }
 
-      const data = await response.json();
+        try {
+            const response = await fetch(`api/users/registro`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ nombre, correo, pais, celular, contra }),
+            });
 
-      if (response.ok) {
-        setMensaje(`Registro exitoso ✅ Bienvenido ${data.nombre}`);
-        localStorage.setItem("usuarioActivo", JSON.stringify(data));
-        setTimeout(() => navigate("/usuario"), 1000);
-      } else {
-        setMensaje(data.message);
-      }
-    } catch (error) {
-      console.error("Error en la solicitud:", error);
-      setMensaje("Hubo un error al registrar el usuario.");
-    }
-  };
+            const data = await response.json();
 
-  return (
-    <div className="form-container">
-      <form onSubmit={handleSubmit}>
-        <h2>Crear cuenta</h2>
+            if (response.ok) {
+                // El backend devuelve { token, user: { ... } }
+                setMensaje(`Registro exitoso ✅ Bienvenido ${data.user.nombre}`);
+                
+                // 🛑 SOLUCIÓN: Usar setAuthData para iniciar sesión en el estado global
+                setAuthData(data.token, data.user); 
+                
+                // localStorage.setItem("usuarioActivo", JSON.stringify(data)); // Eliminado
+                
+                setTimeout(() => navigate("/usuario"), 1000);
+            } else {
+                setMensaje(data.message || "Error desconocido durante el registro.");
+            }
+        } catch (error) {
+            console.error("Error en la solicitud:", error);
+            setMensaje("Hubo un error al registrar el usuario.");
+        }
+    };
 
-        <EtapaPersonal
-          nombre={nombre}
-          setNombre={setNombre}
-          correo={correo}
-          setCorreo={setCorreo}
-          pais={pais}
-          setPais={setPais}
-          celular={celular}
-          setCelular={setCelular}
-        />
+    return (
+        <div className="form-container">
+            <form onSubmit={handleSubmit}>
+                <h2>Crear cuenta</h2>
 
-        <EtapaContra
-          contra={contra}
-          setContra={setContra}
-          confirmarContra={confirmarContra}
-          setConfirmarContra={setConfirmarContra}
-        />
+                <EtapaPersonal
+                    nombre={nombre}
+                    setNombre={setNombre}
+                    correo={correo}
+                    setCorreo={setCorreo}
+                    pais={pais}
+                    setPais={setPais}
+                    celular={celular}
+                    setCelular={setCelular}
+                />
 
-        <button type="submit">Registrarse</button>
+                <EtapaContra
+                    contra={contra}
+                    setContra={setContra}
+                    confirmarContra={confirmarContra}
+                    setConfirmarContra={setConfirmarContra}
+                />
 
-        <Mensaje texto={mensaje} />
+                <button type="submit">Registrarse</button>
 
-        <p>
-          ¿Ya tienes cuenta? <Link to="/iniciar-sesion">Inicia sesión</Link>
-        </p>
-      </form>
-    </div>
-  );
+                <Mensaje texto={mensaje} />
+
+                <p>
+                    ¿Ya tienes cuenta? <Link to="/iniciar-sesion">Inicia sesión</Link>
+                </p>
+            </form>
+        </div>
+    );
 }
 
 export default Registro;
