@@ -37,19 +37,21 @@ import userRoutes from './routes/userRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 
 
-// 1. MONTAJE DE TODAS LAS RUTAS DE LA API
-// 🚨 Nota: Montamos sin el prefijo '/api' aquí, asumiendo que Azure o el frontend lo añade.
-app.use('/products', productRoutes);
-app.use('/categories', categoryRoutes);
-app.use('/users', userRoutes); 
-app.use('/admin', adminRoutes);
+// index.js (Debe volver a la configuración con /api)
 
-// 2. MANEJO EXPLÍCITO DE FALLOS DE LA API (DEBE IR ANTES DEL CATCH-ALL *)
-// Esto captura cualquier URL que empiece por /api/ y que no fue capturada por las rutas de arriba.
-// Garantiza que devolvemos JSON (y no HTML) para errores de la API.
+app.use('/api/products', productRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/users', userRoutes); // ✅ ESTO ES NECESARIO
+app.use('/api/admin', adminRoutes);
+
+
+// index.js (Bloque de manejo de errores al final de todas las rutas)
+
 app.use('/api', (req, res) => {
-    res.status(404).json({ message: 'Ruta de API no encontrada. Verifique la URL y el método de la solicitud.' });
+    // Esto asegura que cualquier 404 dentro de /api devuelva JSON
+    res.status(404).json({ message: 'Ruta de API no encontrada.' });
 });
+// ... seguido por app.get('*') para React
 
 
 // 3. MANEJO DE RUTAS DEL FRONTEND (Catch-All)
