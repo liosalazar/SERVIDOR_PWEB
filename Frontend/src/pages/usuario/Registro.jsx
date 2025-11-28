@@ -11,7 +11,7 @@ import Mensaje from "../../components/ui/Mensaje";
 
 // 🛑 Definir la base de la API usando la variable de entorno
 // La URL es: https://test1serverapi-frchhah8crcncccu.brazilsouth-01.azurewebsites.net/api
-const API_BASE = import.meta.env.VITE_API_BASE_URL;
+const API_BASE = import.meta.env.VITE_API_BASE_URL; // Asegúrate de definir/importar esto
 
 function Registro() {
     // Obtener la función 'setAuthData' del contexto
@@ -41,7 +41,7 @@ function Registro() {
 
         try {
             // 🛑 CORRECCIÓN DE RUTA: Concatenamos API_BASE con la ruta específica del router: /users/registro
-            const response = await fetch(`${API_BASE}/users/registro`, { 
+            const response = await fetch(`${API_BASE}/api/users/registro`, { 
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
