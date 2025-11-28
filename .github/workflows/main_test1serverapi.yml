@@ -20,25 +20,36 @@ jobs:
         with:
           node-version: '24.x'
 
+      # 1. Instalar dependencias del API
       - name: Install dependencies and build API
         run: |
           cd api
           npm install
           npm run build --if-present
+          cd .. # Volver a la raíz
 
+      # 2. Instalar dependencias y Compilar el Frontend
       - name: Build Frontend
         run: |
           cd Frontend
           npm install
           npm run build
+          cd .. # Volver a la raíz
+
+      # 3. PASO CRÍTICO: Preparar el Monolito (Mover el Frontend al Backend)
+      - name: Prepare Artifact for Monolith
+        run: |
+          # Creamos la carpeta 'client' dentro de 'api'
+          mkdir -p api/client 
+          # Copiamos todos los archivos compilados del frontend a api/client
+          cp -r Frontend/dist/* api/client/
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: |
-            api/
-            Frontend/dist/
+          # Solo subimos la carpeta 'api/' (que ahora contiene el frontend)
+          path: api/ 
 
   deploy:
     runs-on: ubuntu-latest
@@ -59,18 +70,13 @@ jobs:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_B3BED0A12C214514BAB42CAADA91324E }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_E61C96E84A9F4B2ABB94C5AEB78F6960 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_077601E2D35B46F394D431DF7EE5DDB2 }}
-
-
-      - name: Deploy Frontend to Azure Web App
+          
+      # --- DESPLIEGUE ÚNICO (MONOLITO) ---
+      # Despliega la carpeta 'api' (que contiene el API y el Frontend/client)
+      - name: Deploy Monolith to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'test1serverapi'
+          # Usamos el nombre corto de tu App Service
+          app-name: 'test1serverapi' 
           slot-name: 'Production'
-          package: './Frontend/dist'
-
-      - name: Deploy Backend to Azure Web App
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: 'test1serverapi'
-          slot-name: 'Production'
-          package: ./api
+          package: ./api # Solo desplegamos el paquete único
