@@ -48,14 +48,13 @@ app.use('/api/admin', adminRoutes);
 // index.js (Bloque de manejo de errores al final de todas las rutas)
 
 app.use('/api', (req, res) => {
-    // Esto asegura que cualquier 404 dentro de /api devuelva JSON
-    res.status(404).json({ message: 'Ruta de API no encontrada.' });
+    res.status(404).json({ message: 'Ruta de API no encontrada. Verifique la URL y el método de la solicitud.' });
 });
 
-app.get('*', (req, res) => {
+app.use('*', (req, res) => {
     res.sendFile(path.join(FRONTEND_BUILD_PATH, 'index.html'));
 });
-// --- INICIAR EL SERVIDOR DESPUÉS DE LA CONEXIÓN DB ---
+
 const PORT = process.env.PORT || 3001;
 
 async function startServer() {
