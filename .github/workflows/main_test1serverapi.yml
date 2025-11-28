@@ -73,13 +73,11 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_E61C96E84A9F4B2ABB94C5AEB78F6960 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_077601E2D35B46F394D431DF7EE5DDB2 }}
           
-      # --- DESPLIEGUE ÚNICO (MONOLITO) ---
-      # Despliega la carpeta 'api' (que contiene el API y el Frontend/client)
+     # --- DESPLIEGUE ÚNICO (MONOLITO) ---
       - name: Deploy Monolith to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'test1serverapi' 
           slot-name: 'Production'
-          # La carpeta 'api' se descargó DENTRO de 'app-package'.
-          # Por lo tanto, el paquete es: app-package/api
-          package: app-package/api
+          # ¡CORRECCIÓN AQUÍ! Desplegamos directamente el contenido de la carpeta 'app-package'
+          package: app-package
