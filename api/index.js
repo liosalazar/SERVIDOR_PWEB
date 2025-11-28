@@ -51,22 +51,10 @@ app.use('/api', (req, res) => {
     // Esto asegura que cualquier 404 dentro de /api devuelva JSON
     res.status(404).json({ message: 'Ruta de API no encontrada.' });
 });
-// ... seguido por app.get('*') para React
 
-
-// 3. MANEJO DE RUTAS DEL FRONTEND (Catch-All)
-// La lógica aquí debe ir AL FINAL para no interferir con las rutas de API.
-
-// La ruta raíz siempre sirve la página principal de React
-app.get('/', (req, res) => {
-    res.sendFile(path.join(FRONTEND_BUILD_PATH, 'index.html'));
-});
-
-// Cualquier otra ruta que no sea API debe ser manejada por React Router (SPA)
 app.get('*', (req, res) => {
     res.sendFile(path.join(FRONTEND_BUILD_PATH, 'index.html'));
 });
-
 // --- INICIAR EL SERVIDOR DESPUÉS DE LA CONEXIÓN DB ---
 const PORT = process.env.PORT || 3001;
 
