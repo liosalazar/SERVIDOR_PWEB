@@ -15,6 +15,7 @@ const app = express();
 const allowedOrigins = process.env.FRONTEND_URL || 'http://localhost:5173';
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use(cors({
   origin: allowedOrigins, 
@@ -33,13 +34,14 @@ app.use(express.static(FRONTEND_BUILD_PATH));
 // Rutas de tu aplicación
 import productRoutes from './routes/productRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
-import userRoutes from './routes/userRoutes.js';
+import userRoutes from './routes/userRoutes.js'; // Ajusta la ruta si es necesario
 import adminRoutes from './routes/adminRoutes.js';
 
-app.use('/api/products', productRoutes);
-app.use('/api/categories', categoryRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/admin', adminRoutes); 
+
+app.use('/products', productRoutes);
+app.use('/categories', categoryRoutes);
+app.use('/users', userRoutes);
+app.use('/admin', adminRoutes); 
 
 app.get('/', (req, res) => {
     // Redirige la raíz a la página principal de React
