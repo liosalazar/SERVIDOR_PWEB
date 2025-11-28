@@ -24,7 +24,25 @@ import AgregarProducto from "./pages/dashboardAdministrador/productos_Gestion/ag
 import EditarProducto from "./pages/dashboardAdministrador/productos_Gestion/editarProducto";
 import GestionCategorias from "./pages/dashboardAdministrador/categorias_Gestion/gestionCategorias";
 import CrearCategorias from "./pages/dashboardAdministrador/categorias_Gestion/crearCategorias";
-// ... (resto de imports) ...
+
+// ...
+import HomePage from "./pages/shop/HomePage";
+import SearchResults from "./pages/shop/SearchResults"; 
+import IniciarSesion from "./pages/usuario/IniciarSesion"; 
+// ...
+import Registro from "./pages/usuario/Registro";
+import OlvideContra from "./pages/usuario/OlvideContra";
+import ProductDetail from "./pages/shop/ProductDetail";
+import Carrito from "./pages/productos/Carrito";
+import Checkout from "./pages/productos/Checkout";
+import PedidoCompleto from "./pages/productos/PedidoCompleto";
+import NotFound from "./pages/notfound/NotFound"; // Para la ruta path="*"
+
+import PanelUsuario from "./pages/usuario/PanelUsuario";
+import EditarPerfil from "./pages/usuario/perfil/EditarPerfil";
+import CambiarContra from "./pages/usuario/perfil/CambiarContra";
+import MisOrdenes from "./pages/usuario/ordenes/MisOrdenes";
+import DetalleOrden from "./pages/usuario/ordenes/DetalleOrden";
 
 function App() {
   // REMOVER: Ya no se simula el usuario. Se usará el AuthContext.

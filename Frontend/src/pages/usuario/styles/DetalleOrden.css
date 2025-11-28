@@ -1,0 +1,68 @@
+.detalleorden-container {
+    padding: 30px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.detalleorden-box {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.detalleorden-title {
+    color: #333;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.detalleorden-header p {
+    margin: 5px 0;
+}
+
+.detalleorden-productos-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.detalleorden-productos-table th,
+.detalleorden-productos-table td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.detalleorden-productos-table th {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* Estilos de estado */
+.orden-completada { color: white; background-color: #28a745; } /* Verde */
+.orden-pendiente { color: white; background-color: #ffc107; } /* Amarillo */
+.orden-cancelada { color: white; background-color: #dc3545; } /* Rojo */
+
+.detalleorden-resumen {
+    text-align: right;
+    margin-top: 20px;
+    font-size: 1.2em;
+}
+
+.detalleorden-total {
+    font-weight: bold;
+    color: #007bff;
+}
+
+.detalleorden-back {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.detalleorden-back a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+}

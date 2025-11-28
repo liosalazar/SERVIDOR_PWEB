@@ -1,4 +1,3 @@
-// routes/userRoutes.js
 import { Router } from 'express'; 
 import pool from '../db.js'; 
 import bcrypt from 'bcrypt'; 
@@ -6,6 +5,9 @@ import jwt from 'jsonwebtoken';
 
 // Importamos los middlewares de autenticación
 import { verifyToken } from '../middleware/authMiddleware.js';
+
+// Importamos los controladores de órdenes
+import { getUserOrders, getOrderById } from '../controllers/orderController.js'; 
 
 const router = Router();
 
@@ -79,7 +81,7 @@ router.post('/iniciar-sesion', async (req, res) => {
     }
 });
 
-// --- RUTA NUEVA: Obtener perfil del usuario autenticado ---
+// --- RUTA PROTEGIDA: Obtener perfil del usuario autenticado ---
 // URL: GET /api/users/me
 router.get('/me', verifyToken, (req, res) => {
     // Si llegamos aquí, el middleware verifyToken pasó.
@@ -89,5 +91,16 @@ router.get('/me', verifyToken, (req, res) => {
         user: req.user
     });
 });
+
+// --- Rutas de Órdenes del Usuario ---
+// Requieren autenticación con verifyToken
+
+// URL: GET /api/users/orders
+// Obtiene todas las órdenes del usuario
+router.get('/orders', verifyToken, getUserOrders);
+
+// URL: GET /api/users/orders/:id
+// Obtiene el detalle de una orden específica
+router.get('/orders/:id', verifyToken, getOrderById);
 
 export default router;

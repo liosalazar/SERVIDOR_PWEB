@@ -1,70 +1,123 @@
-import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import "../styles/MisOrdenes.css";
+import { useState, useEffect } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import "../styles/DetalleOrden.css"; // Asegúrate de crear este archivo CSS
 
 export default function DetalleOrden() {
-  const { id } = useParams();
+  const { id } = useParams(); // Obtiene el ID de la orden de la URL
   const navigate = useNavigate();
   const [orden, setOrden] = useState(null);
-  const [mensaje, setMensaje] = useState("");
+  const [cargando, setCargando] = useState(true);
 
   useEffect(() => {
-    const ordenes = JSON.parse(localStorage.getItem("ordenes")) || [];
-
-    // Convertimos ambos ids a string para evitar problemas de comparación
-    const encontrada = ordenes.find(o => String(o.id) === String(id));
-
-    if (encontrada) setOrden(encontrada);
-    else setOrden(null);
-  }, [id]);
-
-  const cancelarOrden = () => {
-    if (!orden) return;
-
-    const ordenes = JSON.parse(localStorage.getItem("ordenes")) || [];
-    const actualizadas = ordenes.map(o =>
-      String(o.id) === String(orden.id) ? { ...o, estado: "Cancelada" } : o
+    // 1. Cargar todas las órdenes desde localStorage
+    const todasLasOrdenes = JSON.parse(localStorage.getItem("ordenes")) || [];
+    
+    // 2. Buscar la orden específica por ID
+    const ordenEncontrada = todasLasOrdenes.find(
+      (o) => o.id === parseInt(id) || o.id === id // Soporte para ID numérico o string
     );
-    localStorage.setItem("ordenes", JSON.stringify(actualizadas));
 
-    setOrden({ ...orden, estado: "Cancelada" });
-    setMensaje("La orden ha sido cancelada correctamente.");
+    if (ordenEncontrada) {
+      // 3. Calcular el total si aún no está calculado (o asegurar que el total sea correcto)
+      const productosConSubtotal = ordenEncontrada.productos.map(p => ({
+        ...p,
+        subtotal: p.precio * p.cantidad
+      }));
+      
+      const totalCalculado = productosConSubtotal.reduce(
+        (acc, p) => acc + p.subtotal,
+        0
+      );
+
+      setOrden({
+        ...ordenEncontrada,
+        productos: productosConSubtotal,
+        total: totalCalculado 
+      });
+
+    } else {
+      // Si la orden no se encuentra, redirige o muestra un error
+      alert("Orden no encontrada.");
+      navigate("/usuario/ordenes");
+    }
+
+    setCargando(false);
+  }, [id, navigate]);
+
+  if (cargando) {
+    return <div className="detalleorden-container">Cargando detalles de la orden...</div>;
+  }
+
+  if (!orden) {
+    return null; // Ya redirigimos, pero evitamos renderizar si no hay orden
+  }
+
+  // Helper para el estado (similar al que tienes en MisOrdenes.jsx)
+  const getEstadoClase = (estado) => {
+    if (estado === "Completada") return "orden-completada";
+    if (estado === "Pendiente") return "orden-pendiente";
+    if (estado === "Cancelada") return "orden-cancelada";
+    return "";
   };
-
-  if (!orden) return <p className="cargando">No se encontró la orden...</p>;
 
   return (
     <div className="detalleorden-container">
       <div className="detalleorden-box">
-        <h2>Detalle de Orden #{orden.id}</h2>
-        <p><strong>Fecha:</strong> {orden.fecha}</p>
-        <p><strong>Total:</strong> S/ {orden.total.toFixed(2)}</p>
-        <p><strong>Estado:</strong> {orden.estado}</p>
+        <h2 className="detalleorden-title">Detalle de la Orden #{orden.id}</h2>
+        <div className="detalleorden-header">
+          <p>
+            <strong>Fecha de Pedido:</strong> {orden.fecha}
+          </p>
+          <p>
+            <strong>Estado:</strong> 
+            <span className={getEstadoClase(orden.estado)} style={{ marginLeft: '10px', padding: '5px 10px', borderRadius: '5px' }}>
+              {orden.estado}
+            </span>
+          </p>
+          <p>
+            <strong>Dirección de Envío:</strong> {orden.direccion || "No especificada"}
+          </p>
+        </div>
 
-        {orden.direccion && <p><strong>Dirección:</strong> {orden.direccion}</p>}
-        {orden.metodoPago && <p><strong>Método de pago:</strong> {orden.metodoPago}</p>}
+        <hr />
 
-        <h3>Productos:</h3>
-        <ul>
-          {orden.items.map((prod, i) => (
-            <li key={i}>
-              {prod.name} - {prod.quantity} x S/ {prod.price.toFixed(2)}
-            </li>
-          ))}
-        </ul>
+        {/* TABLA DE PRODUCTOS DE LA ORDEN */}
+        <h3 className="detalleorden-subtitle">Productos Incluidos</h3>
+        <table className="detalleorden-productos-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Precio Unitario (S/)</th>
+              <th>Subtotal (S/)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {orden.productos.map((producto, index) => (
+              <tr key={index}>
+                <td>
+                  <Link to={`/productos/${producto.id}`}>{producto.nombre}</Link>
+                </td>
+                <td>{producto.cantidad}</td>
+                <td>S/ {producto.precio.toFixed(2)}</td>
+                <td>S/ {producto.subtotal.toFixed(2)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
 
-        {mensaje && <p className="mensaje-exito">{mensaje}</p>}
-
-        {orden.estado === "Pendiente" && (
-          <button className="btn-cancelar" onClick={cancelarOrden}>
-            Cancelar orden
-          </button>
-        )}
+        {/* RESUMEN DEL TOTAL */}
+        <div className="detalleorden-resumen">
+          <p>
+            <strong>Total de la Orden:</strong>{" "}
+            <span className="detalleorden-total">
+              S/ {orden.total.toFixed(2)}
+            </span>
+          </p>
+        </div>
 
         <div className="detalleorden-back">
-          <button onClick={() => navigate("/usuario/ordenes")}>
-            ← Volver a mis órdenes
-          </button>
+          <Link to="/usuario/ordenes">← Volver a Mis Órdenes</Link>
         </div>
       </div>
     </div>
