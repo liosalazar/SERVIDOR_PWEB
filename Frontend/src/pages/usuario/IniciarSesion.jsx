@@ -5,7 +5,7 @@ import "./styles/Formulario.css";
 import { useAuth } from "../../context/AuthContext"; 
 
 function IniciarSesion() {
-    // 🛑 Obtener la función login y el estado de carga
+    // Obtener la función login y el estado de carga
     const { login, isLoading } = useAuth(); 
     const [dato, setDato] = useState("");
     const [contra, setContra] = useState("");
@@ -17,10 +17,11 @@ function IniciarSesion() {
         setMensajeError(""); // Limpiar errores
 
         try {
-            // 🛑 Usar la función login del contexto (ya maneja la llamada a la API y el estado)
+            // La función 'login' del AuthContext maneja la petición fetch a Azure.
+            // Le pasamos 'dato' (correo) y 'contra'.
             const user = await login(dato, contra); 
             
-            // Si la función login NO lanza un error, fue exitosa
+            // Si la función login NO lanza un error (es exitosa)
             alert("Inicio de sesión exitoso ✅");
             
             // Redirigir según el rol
@@ -31,9 +32,13 @@ function IniciarSesion() {
             }
 
         } catch (error) {
-            // Error capturado desde AuthContext
-            setMensajeError(error.message || "Correo o contraseña incorrectos ❌");
-            alert("Correo o contraseña incorrectos ❌");
+            // Si la función login lanza un error (ej. 400 Bad Request)
+            const errorMessage = error.message.includes('autenticación') 
+                ? "Correo o contraseña incorrectos ❌" 
+                : error.message;
+
+            setMensajeError(errorMessage);
+            alert(errorMessage);
         }
     };
 
@@ -41,7 +46,14 @@ function IniciarSesion() {
         <div className="form-container">
             <form onSubmit={handleLogin}>
                 <h2>Iniciar sesión</h2>
-                {mensajeError && <p style={{ color: 'red', textAlign: 'center' }}>{mensajeError}</p>} 
+                
+                {/* 🛑 Mensaje de error visible en el formulario */}
+                {mensajeError && (
+                    <p className="error-message" style={{ color: 'red', textAlign: 'center', marginBottom: '15px' }}>
+                        {mensajeError}
+                    </p>
+                )} 
+                
                 <input
                     type="email"
                     placeholder="Correo electrónico"
