@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
-const API_BASE = import.meta.env.VITE_API_BASE_URL;
+const API_BASE = import.meta.env.VITE_API_BASE_URL; // Esta línea está resultando en 'undefined'
 
 export const AuthProvider = ({ children }) => {
     // 1. Estado de usuario y token
@@ -19,6 +19,12 @@ export const AuthProvider = ({ children }) => {
 
     // 2. Función de LOGIN (Llama a tu API de Azure)
     const login = async (correo, contra) => {
+            if (!API_BASE) {
+            console.error("VITE_API_BASE_URL no está definido.");
+            throw new Error("Error de configuración: La URL base de la API no se ha cargado.");
+        }
+
+        
         setIsLoading(true);
         try {
             const response = await fetch(`${API_BASE}/users/iniciar-sesion`, {
