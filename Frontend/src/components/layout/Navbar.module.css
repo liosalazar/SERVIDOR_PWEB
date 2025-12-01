@@ -1,9 +1,8 @@
 .navbar {
     background-color: #ffffff;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    padding: 0.3rem 1.5rem;
-    height: 85px;
-    align-items: center;
+    height: 75px;
+    padding: 0.3rem 1.5rem; 
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -11,10 +10,11 @@
 
 .navbarContainer {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
-    gap: 1.5rem;
-    flex-wrap: wrap;
+    gap: 0.5rem;
+    height: 100%;
+    flex-wrap: nowrap;
 }
 
 .navbarLogo {
@@ -26,7 +26,7 @@
 
 .logoImage {
     width: auto;
-    height: 75px;
+    height: 75px; 
     object-fit: contain;
     display: block;
 }
