@@ -52,7 +52,6 @@ export default function OlvideContra() {
     e.preventDefault();
 
     try {
-      // 🛑 2. CORRECCIÓN DE LA URL
       const response = await fetch(`${API_BASE}/users/verify-code`, {
         method: "POST",
         headers: {
@@ -83,7 +82,6 @@ export default function OlvideContra() {
     }
 
     try {
-      // 🛑 2. CORRECCIÓN DE LA URL
       const response = await fetch(`${API_BASE}/users/reset-password`, {
         method: "POST",
         headers: {
