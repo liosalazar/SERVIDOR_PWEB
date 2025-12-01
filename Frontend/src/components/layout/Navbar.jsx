@@ -1,12 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react"; // Ya no necesitamos 'useEffect' ni el estado 'user' local
+import { useState } from "react"; 
 import styles from "./Navbar.module.css";
 import React from "react";
-// 🎯 Importar el hook useAuth para acceder al estado global
 import { useAuth } from "../../context/AuthContext"; 
 
 const Navbar = () => {
-  const { user, logout } = useAuth(); // 🛑 Usamos el user y la función logout del contexto
+  const { user, logout } = useAuth(); 
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
 

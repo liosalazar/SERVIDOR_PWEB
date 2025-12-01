@@ -14,82 +14,115 @@ const router = Router();
 // --- Ruta para registrar un nuevo usuario ---
 // URL: POST /api/users/registro
 router.post('/registro', async (req, res) => {
-    const { nombre, correo, pais, celular, contra } = req.body;
-    // ... [Validaciones omitidas por simplicidad]
-    const checkUserQuery = 'SELECT * FROM users WHERE correo = $1';
+    const { nombre, correo, pais, celular, contra } = req.body;
+    
+    const checkUserQuery = 'SELECT * FROM users WHERE correo = $1';
 
-    try {
-        const existingUser = await pool.query(checkUserQuery, [correo]);
-        if (existingUser.rows.length > 0) {
-            return res.status(400).json({ message: 'El correo ya está registrado' });
-        }
+    try {
+        const existingUser = await pool.query(checkUserQuery, [correo]);
+        if (existingUser.rows.length > 0) {
+            return res.status(400).json({ message: 'El correo ya está registrado' });
+        }
 
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(contra, saltRounds);
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(contra, saltRounds);
 
-        // NOTA: 'rol' por defecto es 'cliente' en la BD, no se inserta aquí.
-        const insertUserQuery = `
-          INSERT INTO users (nombre, correo, pais, celular, contra)
-          VALUES ($1, $2, $3, $4, $5) RETURNING id, nombre, correo, pais, celular, rol
-        `;
-        const result = await pool.query(insertUserQuery, [nombre, correo, pais, celular, hashedPassword]);
-        const newUser = result.rows[0];
+        const insertUserQuery = `
+          INSERT INTO users (nombre, correo, pais, celular, contra)
+          VALUES ($1, $2, $3, $4, $5) RETURNING id, nombre, correo, pais, celular, rol
+        `;
+        const result = await pool.query(insertUserQuery, [nombre, correo, pais, celular, hashedPassword]);
+        const newUser = result.rows[0];
+        
+        // Objeto limpio para el frontend
+        const userResponse = {
+            id: newUser.id,
+            nombre: newUser.nombre,
+            correo: newUser.correo,
+            rol: newUser.rol,
+            pais: newUser.pais,
+            celular: newUser.celular,
+        };
 
-        const token = jwt.sign(
-            { id: newUser.id, correo: newUser.correo, rol: newUser.rol }, // Adjuntamos el rol
-            process.env.JWT_SECRET,
-            { expiresIn: '1h' } 
-        );
+        const token = jwt.sign(
+            { id: newUser.id, correo: newUser.correo, rol: newUser.rol }, 
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' } 
+        );
 
-        return res.status(201).json({ token, user: newUser });
-    } catch (error) {
-        console.error('Error al registrar usuario:', error);
-        return res.status(500).json({ message: 'Error del servidor' });
-    }
+        return res.status(201).json({ token, user: userResponse });
+    } catch (error) {
+        console.error('Error al registrar usuario:', error);
+        return res.status(500).json({ message: 'Error del servidor' });
+    }
 });
 
 // --- Ruta para login de usuario ---
 // URL: POST /api/users/iniciar-sesion
 router.post('/iniciar-sesion', async (req, res) => {
-    const { correo, contra } = req.body;
+    const { correo, contra } = req.body;
 
-    try {
-        const checkUserQuery = 'SELECT * FROM users WHERE correo = $1';
-        const result = await pool.query(checkUserQuery, [correo]);
+    try {
+        const checkUserQuery = 'SELECT * FROM users WHERE correo = $1';
+        const result = await pool.query(checkUserQuery, [correo]);
 
-        if (result.rows.length === 0) {
-            return res.status(400).json({ message: 'Correo no encontrado' });
-        }
+        if (result.rows.length === 0) {
+            return res.status(400).json({ message: 'Correo no encontrado' });
+        }
 
-        const user = result.rows[0];
-        const isMatch = await bcrypt.compare(contra, user.contra);
+        const user = result.rows[0];
+        const isMatch = await bcrypt.compare(contra, user.contra);
 
-        if (!isMatch) {
-            return res.status(400).json({ message: 'Contraseña incorrecta' });
-        }
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Contraseña incorrecta' });
+        }
 
-        const token = jwt.sign(
-            { id: user.id, correo: user.correo, rol: user.rol }, // Adjuntamos el rol
-            process.env.JWT_SECRET,
-            { expiresIn: '1h' } 
-        );
+        // Objeto de respuesta limpio, sin la contraseña hasheada
+        const userResponse = {
+            id: user.id,
+            nombre: user.nombre, 
+            correo: user.correo,
+            rol: user.rol,
+            pais: user.pais,
+            celular: user.celular,
+        };
 
-        res.status(200).json({ token, user });
-    } catch (error) {
-        console.error('Error al iniciar sesión:', error);
-        return res.status(500).json({ message: 'Error del servidor' });
-    }
+        const token = jwt.sign(
+            { id: user.id, correo: user.correo, rol: user.rol }, 
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' } 
+        );
+
+        res.status(200).json({ token, user: userResponse });
+    } catch (error) {
+        console.error('Error al iniciar sesión:', error);
+        return res.status(500).json({ message: 'Error del servidor' });
+    }
 });
 
 // --- RUTA PROTEGIDA: Obtener perfil del usuario autenticado ---
 // URL: GET /api/users/me
-router.get('/me', verifyToken, (req, res) => {
-    // Si llegamos aquí, el middleware verifyToken pasó.
+router.get('/me', verifyToken, async (req, res) => {
     // req.user contiene { id, correo, rol } del token.
-    res.status(200).json({
-        message: 'Datos del usuario autenticado',
-        user: req.user
-    });
+    try {
+        // Consultamos la BD para obtener todos los campos, incluyendo 'nombre'
+        const query = 'SELECT id, nombre, correo, rol, pais, celular, imagen_url FROM users WHERE id = $1';
+        const result = await pool.query(query, [req.user.id]); 
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+        
+        const fullUser = result.rows[0];
+
+        res.status(200).json({
+            message: 'Datos del usuario autenticado',
+            user: fullUser 
+        });
+    } catch (error) {
+        console.error('Error al obtener perfil /me:', error);
+        res.status(500).json({ message: 'Error interno del servidor' });
+    }
 });
 
 // --- Rutas de Órdenes del Usuario ---

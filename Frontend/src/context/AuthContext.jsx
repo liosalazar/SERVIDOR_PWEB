@@ -5,19 +5,16 @@ const AuthContext = createContext();
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 export const AuthProvider = ({ children }) => {
-    // 1. Estado de usuario y token
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(localStorage.getItem('token') || null);
     const [isLoading, setIsLoading] = useState(false);
 
-    // 🛑 FUNCIÓN AUXILIAR: Establece el token y el usuario en el estado y localStorage
     const setAuthData = (newToken, userData) => {
         localStorage.setItem('token', newToken);
         setToken(newToken);
         setUser(userData);
     };
 
-    // 2. Función de LOGIN (Llama a tu API de Azure)
     const login = async (correo, contra) => {
         
         setIsLoading(true);
@@ -35,7 +32,6 @@ export const AuthProvider = ({ children }) => {
 
             const data = await response.json();
             
-            // 🛑 Usamos la nueva función para centralizar el establecimiento de estado
             setAuthData(data.token, data.user); 
             
             setIsLoading(false);
