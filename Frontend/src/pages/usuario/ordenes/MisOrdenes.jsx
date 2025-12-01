@@ -36,7 +36,7 @@ export default function MisOrdenes() {
 
                 if (!response.ok) {
                     // Si la respuesta no es 200 (ej. 401, 404, 500)
-                    throw new Error(`Error ${response.status}: No se pudieron cargar las órdenes.`);
+                    throw new Error(`${response.status}: No se pudieron cargar las órdenes.`);
                 }
 
                 const datos = await response.json();

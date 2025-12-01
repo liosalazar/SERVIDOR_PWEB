@@ -38,5 +38,7 @@ const isAdmin = (req, res, next) => {
     }
 };
 
-// Exportación de ambas funciones
-export { verifyToken, isAdmin };
+export { 
+    verifyToken as protect,
+    isAdmin 
+};

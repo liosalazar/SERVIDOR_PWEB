@@ -1,11 +1,10 @@
-// api/routes/adminRoutes.js
 import express from 'express';
 import adminController from '../controllers/adminController.js';
-import { verifyToken, isAdmin } from '../middleware/authMiddleware.js';
+import { protect, isAdmin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.use(verifyToken, isAdmin);
+router.use(protect, isAdmin);
 
 // --- GESTIÓN DE USUARIOS (Punto 15 y 16) ---
 router.get('/users', adminController.getAdminUsers);

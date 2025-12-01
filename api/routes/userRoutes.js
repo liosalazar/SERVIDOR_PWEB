@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken'; 
 
 // Importamos los middlewares de autenticación
-import { verifyToken } from '../middleware/authMiddleware.js';
+import { protect, isAdmin } from '../middleware/authMiddleware.js';
 
 // Importamos los controladores de órdenes
 import { getUserOrders, getOrderById } from '../controllers/orderController.js'; 
@@ -101,8 +101,8 @@ router.post('/iniciar-sesion', async (req, res) => {
 
 // --- RUTA PROTEGIDA: Obtener perfil del usuario autenticado ---
 // (Tu código de /me... no necesita cambios)
-router.get('/me', verifyToken, async (req, res) => {
-    // req.user contiene { id, correo, rol } del token.
+router.get('/me', protect, async (req, res) => 
+    {    // req.user contiene { id, correo, rol } del token.
     try {
         // Consultamos la BD para obtener todos los campos, incluyendo 'nombre'
         const query = 'SELECT id, nombre, correo, rol, pais, celular, imagen_url FROM users WHERE id = $1';
@@ -126,8 +126,7 @@ router.get('/me', verifyToken, async (req, res) => {
 
 // 🟢 RUTA NUEVA: Actualizar datos de perfil del usuario
 // URL: PATCH /api/users/profile
-router.patch('/profile', verifyToken, async (req, res) => {
-    // req.user contiene el id del usuario autenticado
+router.patch('/profile', protect, async (req, res) => {    // req.user contiene el id del usuario autenticado
     const userId = req.user.id;
     const { nombre, pais, celular, imagen_url } = req.body;
 
@@ -188,15 +187,7 @@ router.patch('/profile', verifyToken, async (req, res) => {
 });
 
 
-// --- Rutas de Órdenes del Usuario ---
-// Requieren autenticación con verifyToken
+router.get('/orders', protect, getUserOrders);
 
-// URL: GET /api/users/orders
-// Obtiene todas las órdenes del usuario
-router.get('/orders', verifyToken, getUserOrders);
-
-// URL: GET /api/users/orders/:id
-// Obtiene el detalle de una orden específica
-router.get('/orders/:id', verifyToken, getOrderById);
-
+router.get('/orders/:id', protect, getOrderById);
 export default router;
