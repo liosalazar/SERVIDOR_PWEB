@@ -61,7 +61,7 @@ app.get('/', (req, res) => {
 });
 
 // Cualquier otra ruta que no sea API debe ser manejada por React Router (SPA)
-app.get('*', (req, res) => {
+app.get(/.*/, (req, res) => { 
     res.sendFile(path.join(FRONTEND_BUILD_PATH, 'index.html'));
 });
 
