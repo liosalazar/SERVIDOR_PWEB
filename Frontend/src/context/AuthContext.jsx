@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
         
         setIsLoading(true);
         try {
-            const response = await fetch(`${API_BASE}/api/users/iniciar-sesion`, {
+            const response = await fetch(`${API_BASE}/users/iniciar-sesion`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ correo, contra }),
@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }) => {
                 return;
             }
             try {
-                const response = await fetch(`${API_BASE}/api/users/me`, {
+                const response = await fetch(`${API_BASE}/users/me`, {
                     method: 'GET',
                     headers: { 'Authorization': `Bearer ${token}` },
                 });

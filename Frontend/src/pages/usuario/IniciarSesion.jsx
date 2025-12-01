@@ -17,11 +17,8 @@ function IniciarSesion() {
         setMensajeError(""); // Limpiar errores
 
         try {
-            // La función 'login' del AuthContext maneja la petición fetch a Azure.
-            // Le pasamos 'dato' (correo) y 'contra'.
             const user = await login(dato, contra); 
             
-            // Si la función login NO lanza un error (es exitosa)
             alert("Inicio de sesión exitoso ✅");
             
             // Redirigir según el rol
@@ -32,7 +29,6 @@ function IniciarSesion() {
             }
 
         } catch (error) {
-            // Si la función login lanza un error (ej. 400 Bad Request)
             const errorMessage = error.message.includes('autenticación') 
                 ? "Correo o contraseña incorrectos ❌" 
                 : error.message;
@@ -47,7 +43,6 @@ function IniciarSesion() {
             <form onSubmit={handleLogin}>
                 <h2>Iniciar sesión</h2>
                 
-                {/* 🛑 Mensaje de error visible en el formulario */}
                 {mensajeError && (
                     <p className="error-message" style={{ color: 'red', textAlign: 'center', marginBottom: '15px' }}>
                         {mensajeError}

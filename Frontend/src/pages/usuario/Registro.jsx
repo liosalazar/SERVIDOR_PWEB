@@ -41,8 +41,8 @@ function Registro() {
 
         try {
             // 🛑 CORRECCIÓN DE RUTA: Concatenamos API_BASE con la ruta específica del router: /users/registro
-            const response = await fetch(`${API_BASE}/api/users/registro`, { 
-                method: "POST",
+            const response = await fetch(`${API_BASE}/users/registro`, {
+                    method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
