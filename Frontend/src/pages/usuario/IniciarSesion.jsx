@@ -23,7 +23,7 @@ function IniciarSesion() {
             
             // Redirigir según el rol
             if (user.rol === "admin") {
-                navigate("/admin/usuarios");
+                navigate("/dashboard");
             } else {
                 navigate("/usuario");
             }
