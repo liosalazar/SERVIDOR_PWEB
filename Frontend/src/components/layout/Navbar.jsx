@@ -45,6 +45,7 @@ const Navbar = () => {
             <>
               <span className={styles.welcome}>¡Bienvenido, {user.nombre}!</span>
 
+              {/* ... enlaces de administrador/cliente ... */}
               {user.rol === "admin" ? (
                 <>
                   <Link to="/dashboard/usuarios">Usuarios</Link>
@@ -56,7 +57,8 @@ const Navbar = () => {
                   <Link to="/usuario/ordenes">Mis Órdenes</Link>
                 </>
               )}
-
+            
+              {/* 🛒 CORRECCIÓN CLAVE: El carrito solo se muestra SI HAY USUARIO */}
               <Link to="/carrito" className={styles.cartLink}>
                 🛒 Carrito
               </Link>
@@ -70,9 +72,12 @@ const Navbar = () => {
               <Link to="/iniciar-sesion">Iniciar Sesión</Link>
               <Link to="/registro">Registrarse</Link>
 
+              {/* ❌ ELIMINAR ESTE BLOQUE: Ya no se renderiza si no hay sesión */}
+              {/*
               <Link to="/carrito" className={styles.cartLink}>
                 🛒 Carrito
               </Link>
+              */}
             </>
           )}
         </nav>

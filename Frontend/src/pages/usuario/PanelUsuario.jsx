@@ -29,21 +29,37 @@ const PanelUsuario = () => {
     const irACambiarContra = () => navigate("/usuario/perfil/cambiar-contra");
 
     return (
+    <div className="page-wrapper">
         <div className="panel-container">
-            {/* 1. Muestra el perfil usando el componente de vista */}
-            <PerfilUsuario usuario={user} /> 
+            {/* LADO IZQUIERDO */}
+            <div className="panel-perfil-data">
+                <PerfilUsuario usuario={user} /> 
+            </div>
 
-            {/* 2. Botones de acción (Editar y Cambiar Contraseña) */}
-            <AccionesPerfil 
-                irACambiarContra={irACambiarContra}
-                irAEditarPerfil={irAEditarPerfil}
-                // Ya que estás en el panel principal, no necesitas el botón 'Volver' aquí
-            />
-
-            {/* Opcional: Botón de cerrar sesión */}
-            <button onClick={logout} className="logout-button">Cerrar Sesión</button>
+            {/* LADO DERECHO: Acciones agrupadas en una sola caja */}
+            <div className="panel-acciones-sidebar"> 
+                <div className="panel-actions-box"> {/* Esta es la caja que envuelve los 3 botones */}
+                    <p className="panel-subtitle">Opciones de Cuenta</p>
+                    <div className="panel-actions">
+                        {/* Botón 1: Editar Perfil */}
+                        <a onClick={irAEditarPerfil} className="panel-link panel-link-edit">
+                            Editar Perfil
+                        </a>
+                        {/* Botón 2: Cambiar Contraseña */}
+                        <a onClick={irACambiarContra} className="panel-link panel-link-orders"> 
+                            Cambiar Contraseña
+                        </a>
+                        {/* Botón 3: Cerrar Sesión (Usando el estilo de link de logout) */}
+                        <button onClick={logout} className="logout-button panel-link-logout">
+                            Cerrar Sesión
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-    );
+        {/* ... */}
+    </div>
+);
 };
 
 export default PanelUsuario;
