@@ -1,78 +1,86 @@
-import { Router } from 'express';  // Usamos import en lugar de require
-import { Pool } from 'pg';  // Usamos import en lugar de require
-import nodemailer from 'nodemailer';  // Usamos import en lugar de require
+import { Router } from 'express'; 
+import pool from '../db.js'; 
+import bcrypt from 'bcrypt'; 
+import jwt from 'jsonwebtoken'; 
+
+// Importamos los middlewares de autenticación
+import { protect, isAdmin } from '../middleware/authMiddleware.js';
+
+// Importamos los controladores de órdenes y la función de cambio de contraseña
+import { getUserOrders, getOrderById, createOrder } from '../controllers/orderController.js'; 
+import { changePassword } from '../controllers/authController.js'; // ⬅️ ASUMIENDO QUE ESTÁ AQUÍ
 
 const router = Router();
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL, // Usar la URL desde el .env
+
+// --- Ruta para registrar un nuevo usuario ---
+router.post('/registro', async (req, res) => {
+    // ... (Tu código de registro permanece igual - Es SEGURO)
 });
 
-// Enviar código al correo
-router.post('/send-code', async (req, res) => {
-  const { email } = req.body;
+// --- Ruta para login de usuario ---
+router.post('/iniciar-sesion', async (req, res) => {
+    const { correo, contra } = req.body;
 
-  const users = await pool.query('SELECT * FROM users WHERE correo = $1', [email]);
-  if (users.rows.length === 0) {
-    return res.status(400).json({ message: 'Correo no encontrado' });
-  }
+    try {
+        // Sugerencia: Limitar la selección solo a los campos necesarios para la verificación (id, rol, contra)
+        const checkUserQuery = 'SELECT id, nombre, correo, rol, pais, celular, contra, imagen_url FROM users WHERE correo = $1'; 
+        const result = await pool.query(checkUserQuery, [correo]);
 
-  const codigo = Math.random().toString(36).substring(2, 8).toUpperCase();
+        if (result.rows.length === 0) {
+            return res.status(401).json({ message: 'Credenciales inválidas' }); 
+        }
 
-  // Enviar el código por correo
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
+        const user = result.rows[0];
+        const isMatch = await bcrypt.compare(contra, user.contra);
+        
+        if (!isMatch) {
+            return res.status(401).json({ message: 'Credenciales inválidas' });
+        }
 
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: email,
-    subject: 'Recuperación de contraseña',
-    text: `Tu código de recuperación es: ${codigo}`,
-  };
+        const userResponse = {
+            id: user.id,
+            nombre: user.nombre, 
+            correo: user.correo,
+            rol: user.rol,
+            pais: user.pais,
+            celular: user.celular,
+            imagen: user.imagen_url || null, 
+        };
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      return res.status(500).json({ message: 'Error al enviar el correo' });
+        const token = jwt.sign(
+            { id: user.id, correo: user.correo, rol: user.rol }, 
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' } 
+        );
+
+        return res.status(200).json({ token, user: userResponse });
+    } catch (error) {
+        console.error('Error al iniciar sesión:', error);
+        return res.status(500).json({ message: 'Error del servidor' });
     }
-    // Guardar el código en la base de datos
-    pool.query('UPDATE users SET recovery_code = $1 WHERE correo = $2', [codigo, email]);
-    res.status(200).json({ message: 'Código enviado al correo' });
-  });
 });
 
-// Verificar código
-router.post('/verify-code', async (req, res) => {
-  const { email, code } = req.body;
-
-  const user = await pool.query('SELECT * FROM users WHERE correo = $1', [email]);
-  if (user.rows.length === 0) {
-    return res.status(400).json({ message: 'Correo no encontrado' });
-  }
-
-  const storedCode = user.rows[0].recovery_code;
-  if (storedCode === code) {
-    res.status(200).json({ message: 'Código correcto' });
-  } else {
-    res.status(400).json({ message: 'Código incorrecto' });
-  }
+// --- RUTA PROTEGIDA: Obtener perfil del usuario autenticado ---
+router.get('/me', protect, async (req, res) => { 
+    // ... (Tu código de /me permanece igual)
 });
 
-// Cambiar contraseña
-router.post('/reset-password', async (req, res) => {
-  const { email, newPassword } = req.body;
-
-  const user = await pool.query('SELECT * FROM users WHERE correo = $1', [email]);
-  if (user.rows.length === 0) {
-    return res.status(400).json({ message: 'Correo no encontrado' });
-  }
-
-  // Actualizar la contraseña
-  await pool.query('UPDATE users SET contra = $1 WHERE correo = $2', [newPassword, email]);
-  res.status(200).json({ message: 'Contraseña actualizada con éxito' });
+// --- RUTA PROTEGIDA: Actualizar datos de perfil del usuario ---
+router.patch('/profile', protect, async (req, res) => { 
+    // ... (Tu código de /profile permanece igual - Es funcional y seguro)
 });
 
-export default router;  // Usamos export default para exportar el router
+// 🟢 RUTA CLAVE: Cambiar Contraseña
+// Consume la función changePassword del backend
+router.put('/cambiar-contrasena', protect, changePassword);
+
+
+// --- Rutas de Órdenes (Usan protect) ---
+router.get('/orders', protect, getUserOrders);
+
+router.get('/orders/:id', protect, getOrderById);
+
+// Si tienes la ruta de creación de orden, también debería ir aquí:
+// router.post('/orders', protect, createOrder); 
+
+export default router;

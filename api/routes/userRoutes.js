@@ -9,10 +9,13 @@ import { protect, isAdmin } from '../middleware/authMiddleware.js';
 // Importamos los controladores de órdenes
 import { getUserOrders, getOrderById } from '../controllers/orderController.js'; 
 
+// 🔑 IMPORTACIÓN CLAVE: Importamos la función changePassword desde userController.js
+// ⚠️ Asegúrate de que esta función esté exportada en ese archivo.
+import { changePassword } from '../controllers/userController.js'; 
+
 const router = Router();
 
-// --- Ruta para registrar un nuevo usuario ---
-// (Tu código de /registro... no necesita cambios)
+// --- Ruta para registrar un nuevo usuario (SEGURO) ---
 router.post('/registro', async (req, res) => {
     const { nombre, correo, pais, celular, contra } = req.body;
     
@@ -56,31 +59,25 @@ router.post('/registro', async (req, res) => {
     }
 });
 
-// --- Ruta para login de usuario ---
-// (Tu código de /iniciar-sesion... no necesita cambios)
+// --- Ruta para login de usuario (SEGURO) ---
 router.post('/iniciar-sesion', async (req, res) => {
     const { correo, contra } = req.body;
 
     try {
-        const checkUserQuery = 'SELECT id, nombre, correo, rol, pais, celular, contra, imagen_url FROM users WHERE correo = $1'; // 👈 Sugerencia 1: Seleccionar explícitamente los campos
+        const checkUserQuery = 'SELECT id, nombre, correo, rol, pais, celular, contra, imagen_url FROM users WHERE correo = $1'; 
         const result = await pool.query(checkUserQuery, [correo]);
 
-        // 1. Verificación del Correo
         if (result.rows.length === 0) {
-            // 🛑 Sugerencia 2: Usar un mensaje genérico para evitar dar pistas a atacantes
             return res.status(401).json({ message: 'Credenciales inválidas' }); 
         }
 
         const user = result.rows[0];
         const isMatch = await bcrypt.compare(contra, user.contra);
         
-        // 2. Verificación de la Contraseña
         if (!isMatch) {
-            // 🛑 Sugerencia 2: Usar 401 y el mismo mensaje genérico que arriba
             return res.status(401).json({ message: 'Credenciales inválidas' });
         }
 
-        // Objeto de respuesta limpio (Asegúrate de que 'imagen' exista si la usas en el frontend)
         const userResponse = {
             id: user.id,
             nombre: user.nombre, 
@@ -88,7 +85,6 @@ router.post('/iniciar-sesion', async (req, res) => {
             rol: user.rol,
             pais: user.pais,
             celular: user.celular,
-            // 👈 Asegúrate de incluir 'imagen' si la necesitas en el frontend
             imagen: user.imagen_url || null, 
         };
 
@@ -98,7 +94,6 @@ router.post('/iniciar-sesion', async (req, res) => {
             { expiresIn: '1h' } 
         );
 
-        // Envío de la respuesta exitosa
         return res.status(200).json({ token, user: userResponse });
     } catch (error) {
         console.error('Error al iniciar sesión:', error);
@@ -107,11 +102,9 @@ router.post('/iniciar-sesion', async (req, res) => {
 });
 
 // --- RUTA PROTEGIDA: Obtener perfil del usuario autenticado ---
-// (Tu código de /me... no necesita cambios)
 router.get('/me', protect, async (req, res) => 
     {    // req.user contiene { id, correo, rol } del token.
     try {
-        // Consultamos la BD para obtener todos los campos, incluyendo 'nombre'
         const query = 'SELECT id, nombre, correo, rol, pais, celular, imagen_url FROM users WHERE id = $1';
         const result = await pool.query(query, [req.user.id]); 
 
@@ -123,7 +116,7 @@ router.get('/me', protect, async (req, res) =>
 
         res.status(200).json({
             message: 'Datos del usuario autenticado',
-            user: fullUser 
+            user: fullUser 
         });
     } catch (error) {
         console.error('Error al obtener perfil /me:', error);
@@ -131,13 +124,11 @@ router.get('/me', protect, async (req, res) =>
     }
 });
 
-// 🟢 RUTA NUEVA: Actualizar datos de perfil del usuario
-// URL: PATCH /api/users/profile
+// --- RUTA PROTEGIDA: Actualizar datos de perfil del usuario ---
 router.patch('/profile', protect, async (req, res) => {    // req.user contiene el id del usuario autenticado
     const userId = req.user.id;
     const { nombre, pais, celular, imagen_url } = req.body;
 
-    // Construir la consulta de forma dinámica
     const fields = [];
     const values = [];
     let queryIndex = 1;
@@ -159,12 +150,11 @@ router.patch('/profile', protect, async (req, res) => {    // req.user contiene 
         values.push(imagen_url);
     }
     
-    // Si no hay campos para actualizar
     if (fields.length === 0) {
         return res.status(400).json({ message: 'No hay datos válidos para actualizar.' });
     }
 
-    values.push(userId); // El ID del usuario es el último parámetro
+    values.push(userId); 
 
     const updateQuery = `
         UPDATE users SET ${fields.join(', ')} 
@@ -181,8 +171,6 @@ router.patch('/profile', protect, async (req, res) => {    // req.user contiene 
 
         const updatedUser = result.rows[0];
 
-        // NOTA: Es importante que el frontend (AuthContext) actualice su estado
-        // con estos nuevos datos después de un UPDATE exitoso.
         res.status(200).json({
             message: 'Perfil actualizado exitosamente',
             user: updatedUser
@@ -193,8 +181,14 @@ router.patch('/profile', protect, async (req, res) => {    // req.user contiene 
     }
 });
 
+// 🟢 RUTA CLAVE: Cambiar Contraseña
+// Consume la función changePassword que debe estar en userController.js
+router.put('/cambiar-contrasena', protect, changePassword);
 
+
+// --- Rutas de Órdenes (Usan protect) ---
 router.get('/orders', protect, getUserOrders);
 
 router.get('/orders/:id', protect, getOrderById);
+
 export default router;

@@ -13,7 +13,7 @@ const getUserOrders = async (req, res) => {
                 o.metodo_pago AS "metodoPago",
                 json_agg(
                     json_build_object(
-                        'producto_id', io.producto_id,
+                        'producto_id', io."productId",
                         'nombre', p.nombre,
                         'precio', io.precio_unitario,
                         'cantidad', io.cantidad
@@ -22,9 +22,9 @@ const getUserOrders = async (req, res) => {
             FROM 
                 orders o
             JOIN 
-                items_orden io ON o.id = io.orden_id
+                order_details io ON o.id = io."orderId"
             JOIN 
-                productos p ON io.producto_id = p.id
+                products p ON io."productId" = p.id
              
                 WHERE "userId" = $1
             GROUP BY 
@@ -56,7 +56,7 @@ const getOrderById = async (req, res) => {
                 o.metodo_pago AS "metodoPago",
                 json_agg(
                     json_build_object(
-                        'producto_id', io.producto_id,
+                        'producto_id', io."productId",
                         'nombre', p.nombre,
                         'precio', io.precio_unitario,
                         'cantidad', io.cantidad
@@ -65,9 +65,9 @@ const getOrderById = async (req, res) => {
             FROM 
                 orders o
             JOIN 
-                items_orden io ON o.id = io.orden_id
+                order_details io ON o.id = io."orderId"
             JOIN 
-                productos p ON io.producto_id = p.id
+                products p ON io."productId" = p.id
             WHERE 
                 o.id = $1 AND o."userId" = $2
             GROUP BY 
@@ -111,10 +111,9 @@ const createOrder = async (req, res) => {
         ]);
 
         const orderId = orderResult.rows[0].id;
-
         const itemValues = [];
         items.forEach(item => {
-            itemValues.push(orderId, item.productoId, item.cantidad, item.precioUnitario);
+            itemValues.push(orderId, item.id, item.quantity, item.price);
         });
 
         const placeholderString = items.map((_, i) => 
@@ -122,7 +121,7 @@ const createOrder = async (req, res) => {
         ).join(', ');
         
         const itemInsertQuery = `
-            INSERT INTO items_orden (orden_id, producto_id, cantidad, precio_unitario)
+            INSERT INTO order_details ("orderId", "productId", cantidad, precio_unitario)
             VALUES ${placeholderString}
         `;
         

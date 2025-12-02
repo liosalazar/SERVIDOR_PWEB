@@ -8,9 +8,11 @@ export default function CambiarContrasena() {
   const [mensaje, setMensaje] = useState('');
   const [tipoMensaje, setTipoMensaje] = useState(''); // "success" o "error"
 
-  const manejarCambio = (e) => {
+  const manejarCambio = async (e) => { // ⬅️ Hacemos la función ASÍNCRONA
     e.preventDefault();
+    setMensaje(''); // Limpiar mensajes al inicio
 
+    // 1. Validaciones en el lado del cliente
     if (!actual || !nueva || !confirmar) {
       setMensaje('Por favor completa todos los campos.');
       setTipoMensaje('error');
@@ -23,11 +25,58 @@ export default function CambiarContrasena() {
       return;
     }
 
-    setMensaje('Contraseña cambiada exitosamente ✅');
-    setTipoMensaje('success');
-    setActual('');
-    setNueva('');
-    setConfirmar('');
+    if (nueva.length < 6) { // Validación de longitud mínima
+        setMensaje('La nueva contraseña debe tener al menos 6 caracteres.');
+        setTipoMensaje('error');
+        return;
+    }
+
+
+    // 2. Comunicación con el Backend
+    try {
+        // ⚠️ Asegúrate de que esta URL sea correcta para tu servidor
+        const API_URL = '/api/auth/cambiar-contrasena'; 
+        const token = localStorage.getItem('token'); 
+
+        if (!token) {
+            setMensaje('No estás autenticado. Por favor, inicia sesión de nuevo.');
+            setTipoMensaje('error');
+            return;
+        }
+
+        const response = await fetch(API_URL, {
+            method: 'PUT', // Generalmente se usa PUT para actualizar
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Envía el token de autenticación
+            },
+            body: JSON.stringify({
+                actual: actual,
+                nueva: nueva
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            // 3. Éxito
+            setMensaje('Contraseña cambiada exitosamente ✅');
+            setTipoMensaje('success');
+            // Limpiar los campos solo si fue exitoso
+            setActual('');
+            setNueva('');
+            setConfirmar('');
+        } else {
+            // 4. Error del servidor (ej: Contraseña actual incorrecta)
+            setMensaje(data.message || 'Error al cambiar la contraseña. Verifica la contraseña actual.');
+            setTipoMensaje('error');
+        }
+
+    } catch (error) {
+        console.error('Error al intentar cambiar la contraseña:', error);
+        setMensaje('Error de conexión o del servidor.');
+        setTipoMensaje('error');
+    }
   };
 
   return (
@@ -54,7 +103,7 @@ export default function CambiarContrasena() {
       </form>
 
       {mensaje && (
-        <p className={tipoMensaje === 'error' ? 'error' : ''}>{mensaje}</p>
+        <p className={`mensaje ${tipoMensaje}`}>{mensaje}</p>
       )}
     </div>
   );
