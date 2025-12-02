@@ -6,7 +6,7 @@ const pool = new Pool({
 
 const createOrder = async (req, res) => {
     const { cartItems, total, shippingAddress, paymentMethod } = req.body;
-    const userId = req.userId; // Obtenido del JWT por el middleware
+    const userId = req.userId;
 
     if (!cartItems || cartItems.length === 0 || !total || !shippingAddress || !paymentMethod) {
         return res.status(400).json({ message: 'Datos de la orden incompletos.' });
@@ -14,9 +14,8 @@ const createOrder = async (req, res) => {
 
     const client = await pool.connect();
     try {
-        await client.query('BEGIN'); // Iniciar transacción
+        await client.query('BEGIN');
 
-     
         const orderQuery = `
             INSERT INTO orders ("userId", total, direccion_envio, metodo_pago, estado)
             VALUES ($1, $2, $3, $4, 'Pendiente') 
@@ -35,9 +34,8 @@ const createOrder = async (req, res) => {
         
         await Promise.all(detailQueries);
 
-        await client.query('COMMIT'); // Confirmar transacción
+        await client.query('COMMIT');
 
-       
         res.status(201).json({ 
             message: 'Orden creada con éxito', 
             orderId: newOrder.id,
@@ -45,7 +43,7 @@ const createOrder = async (req, res) => {
         });
 
     } catch (error) {
-        await client.query('ROLLBACK'); // Revertir si hay error
+        await client.query('ROLLBACK');
         console.error('Error al crear la orden:', error);
         res.status(500).json({ message: 'Error en el servidor al procesar la orden' });
     } finally {

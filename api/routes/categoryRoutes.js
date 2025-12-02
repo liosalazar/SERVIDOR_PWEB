@@ -7,7 +7,6 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
-// Obtener todas las categorías
 router.get('/', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM categories');
@@ -18,7 +17,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Crear una nueva categoría
 router.post('/', async (req, res) => {
   const { name, description } = req.body;
   try {
@@ -34,4 +32,4 @@ router.post('/', async (req, res) => {
   }
 });
 
-export default router; // Exportamos el router como un módulo ES
+export default router; 

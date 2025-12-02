@@ -1,9 +1,8 @@
 const { Pool } = require('pg');
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL, // Leer desde .env
+  connectionString: process.env.DATABASE_URL
 });
 
-// Obtener todas las categorías
 const getAllCategories = async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM categories');
@@ -13,7 +12,6 @@ const getAllCategories = async (req, res) => {
   }
 };
 
-// Obtener una categoría por ID
 const getCategoryById = async (req, res) => {
   const { id } = req.params;
   try {

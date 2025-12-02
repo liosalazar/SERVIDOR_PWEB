@@ -3,19 +3,14 @@ import pool from '../db.js';
 import bcrypt from 'bcrypt'; 
 import jwt from 'jsonwebtoken'; 
 
-// Importamos los middlewares de autenticación
 import { protect, isAdmin } from '../middleware/authMiddleware.js';
 
-// Importamos los controladores de órdenes
 import { getUserOrders, getOrderById } from '../controllers/orderController.js'; 
 
-// 🔑 IMPORTACIÓN CLAVE: Importamos la función changePassword desde userController.js
-// ⚠️ Asegúrate de que esta función esté exportada en ese archivo.
 import { changePassword } from '../controllers/userController.js'; 
 
 const router = Router();
 
-// --- Ruta para registrar un nuevo usuario (SEGURO) ---
 router.post('/registro', async (req, res) => {
     const { nombre, correo, pais, celular, contra } = req.body;
     
@@ -59,7 +54,6 @@ router.post('/registro', async (req, res) => {
     }
 });
 
-// --- Ruta para login de usuario (SEGURO) ---
 router.post('/iniciar-sesion', async (req, res) => {
     const { correo, contra } = req.body;
 
@@ -101,9 +95,7 @@ router.post('/iniciar-sesion', async (req, res) => {
     }
 });
 
-// --- RUTA PROTEGIDA: Obtener perfil del usuario autenticado ---
-router.get('/me', protect, async (req, res) => 
-    {    // req.user contiene { id, correo, rol } del token.
+router.get('/me', protect, async (req, res) => {
     try {
         const query = 'SELECT id, nombre, correo, rol, pais, celular, imagen_url FROM users WHERE id = $1';
         const result = await pool.query(query, [req.user.id]); 
@@ -124,8 +116,7 @@ router.get('/me', protect, async (req, res) =>
     }
 });
 
-// --- RUTA PROTEGIDA: Actualizar datos de perfil del usuario ---
-router.patch('/profile', protect, async (req, res) => {    // req.user contiene el id del usuario autenticado
+router.patch('/profile', protect, async (req, res) => {
     const userId = req.user.id;
     const { nombre, pais, celular, imagen_url } = req.body;
 
@@ -181,12 +172,8 @@ router.patch('/profile', protect, async (req, res) => {    // req.user contiene 
     }
 });
 
-// 🟢 RUTA CLAVE: Cambiar Contraseña
-// Consume la función changePassword que debe estar en userController.js
 router.put('/cambiar-contrasena', protect, changePassword);
 
-
-// --- Rutas de Órdenes (Usan protect) ---
 router.get('/orders', protect, getUserOrders);
 
 router.get('/orders/:id', protect, getOrderById);

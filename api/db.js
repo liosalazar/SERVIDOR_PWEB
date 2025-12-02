@@ -1,8 +1,7 @@
-// db.js
 import { Pool } from 'pg';
-import dotenv from 'dotenv'; // <--- 1. Importa dotenv
+import dotenv from 'dotenv'; 
 
-dotenv.config(); // <--- 2. Carga las variables AQUÍ mismo
+dotenv.config();
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,

@@ -1,5 +1,3 @@
-// src/pages/usuario/PanelUsuario.jsx
-
 import React, { useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext.jsx'; 
 import { useNavigate } from 'react-router-dom'; 
@@ -24,10 +22,8 @@ const PanelUsuario = () => {
     const irACambiarContra = () => navigate("/usuario/perfil/cambiar-contra");
 
     return (
-
         <div className="page-wrapper"> 
             <div className="panel-container">
-                
                 <div className="panel-perfil-data">
                     <PerfilUsuario usuario={user} /> 
                 </div>
@@ -36,7 +32,6 @@ const PanelUsuario = () => {
                     <div className="panel-actions-box"> 
                         <p className="panel-subtitle">Opciones de Cuenta</p>
                         <div className="panel-actions">
-                            
                             <a 
                                 onClick={irAEditarPerfil} 
                                 className="panel-link panel-link-edit" 

@@ -1,9 +1,7 @@
 const { Pool } = require('pg');
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL, // Leer desde .env
+  connectionString: process.env.DATABASE_URL,
 });
-
-// Obtener todos los productos
 const getAllProducts = async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM products');
@@ -12,8 +10,6 @@ const getAllProducts = async (req, res) => {
     res.status(500).json({ message: 'Error al obtener productos', error: err });
   }
 };
-
-// Obtener un producto por ID
 const getProductById = async (req, res) => {
   const { id } = req.params;
   try {
@@ -26,8 +22,6 @@ const getProductById = async (req, res) => {
     res.status(500).json({ message: 'Error al obtener el producto', error: err });
   }
 };
-
-// Crear un nuevo producto
 const createProduct = async (req, res) => {
   const { name, description, price, image, categoryId } = req.body;
   try {
@@ -40,8 +34,6 @@ const createProduct = async (req, res) => {
     res.status(500).json({ message: 'Error al crear el producto', error: err });
   }
 };
-
-// Actualizar un producto
 const updateProduct = async (req, res) => {
   const { id } = req.params;
   const { name, description, price, image, categoryId } = req.body;

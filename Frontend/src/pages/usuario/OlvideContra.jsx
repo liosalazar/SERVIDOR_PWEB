@@ -6,7 +6,6 @@ import EtapaCodigo from "../../components/forms/EtapaCodigo";
 import EtapaNuevaContra from "../../components/forms/EtapaNuevaContra";
 import Mensaje from "../../components/ui/Mensaje";
 
-// 🎯 1. DEFINIR LA BASE DE LA API USANDO LA VARIABLE DE ENTORNO
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 export default function OlvideContra() {
@@ -26,7 +25,6 @@ export default function OlvideContra() {
     }
 
     try {
-      // 🛑 2. CORRECCIÓN DE LA URL
       const response = await fetch(`${API_BASE}/users/send-code`, {
         method: "POST",
         headers: {

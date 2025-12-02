@@ -1,11 +1,8 @@
 import pool from '../db.js';
 
-// --- FUNCIONES EXISTENTES (SIN CAMBIOS EN LA LÓGICA DE UNIÓN) ---
-
 const getUserOrders = async (req, res) => {
     const userId = req.user.id; 
     if (!userId) {
-        // Si sigue siendo nulo, el problema es el middleware
         return res.status(401).json({ message: 'Error de autenticación: Usuario no encontrado.' });
     }
     try {
@@ -20,7 +17,7 @@ const getUserOrders = async (req, res) => {
                 json_agg(
                     json_build_object(
                         'producto_id', io."productId",
-                        'nombre', io.nombre_producto,  -- Aquí obtenemos el nombre directamente de order_details
+                        'nombre', io.nombre_producto,
                         'precio', io.precio_unitario,
                         'cantidad', io.cantidad
                     )
@@ -61,7 +58,7 @@ const getOrderById = async (req, res) => {
                 json_agg(
                     json_build_object(
                         'producto_id', io."productId",
-                        'nombre', io.nombre_producto,  -- Obtener desde order_details
+                        'nombre', io.nombre_producto,
                         'precio', io.precio_unitario,
                         'cantidad', io.cantidad
                     )
@@ -85,8 +82,6 @@ const getOrderById = async (req, res) => {
         res.status(500).json({ message: 'Error del servidor al obtener el detalle de la orden.' });
     }
 };
-
-// --- FUNCIÓN CORREGIDA ---
 
 const createOrder = async (req, res) => {
     const userId = req.user.id; 
@@ -117,13 +112,12 @@ const createOrder = async (req, res) => {
         const orderId = orderResult.rows[0].id;
         const itemValues = [];
         
-        // CORRECCIÓN CLAVE: 5 VALORES por ITEM: orderId, productId, quantity, price, nombre_producto
         items.forEach(item => {
-            itemValues.push(orderId, item.id, item.quantity, item.price, item.name); // Asumimos item.name
+            itemValues.push(orderId, item.id, item.quantity, item.price, item.name);
         });
 
         const placeholderString = items.map((_, i) => 
-            `($${i * 5 + 1}, $${i * 5 + 2}, $${i * 5 + 3}, $${i * 5 + 4}, $${i * 5 + 5})` // 5 placeholders
+            `($${i * 5 + 1}, $${i * 5 + 2}, $${i * 5 + 3}, $${i * 5 + 4}, $${i * 5 + 5})`
         ).join(', ');
         
         const itemInsertQuery = `
