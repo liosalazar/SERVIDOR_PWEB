@@ -4,6 +4,10 @@ import pool from '../db.js';
 
 const getUserOrders = async (req, res) => {
     const userId = req.user.id; 
+    if (!userId) {
+        // Si sigue siendo nulo, el problema es el middleware
+        return res.status(401).json({ message: 'Error de autenticación: Usuario no encontrado.' });
+    }
     try {
         const query = `
             SELECT 
