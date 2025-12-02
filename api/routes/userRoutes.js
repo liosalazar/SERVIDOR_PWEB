@@ -62,21 +62,25 @@ router.post('/iniciar-sesion', async (req, res) => {
     const { correo, contra } = req.body;
 
     try {
-        const checkUserQuery = 'SELECT * FROM users WHERE correo = $1';
+        const checkUserQuery = 'SELECT id, nombre, correo, rol, pais, celular, contra, imagen_url FROM users WHERE correo = $1'; // 👈 Sugerencia 1: Seleccionar explícitamente los campos
         const result = await pool.query(checkUserQuery, [correo]);
 
+        // 1. Verificación del Correo
         if (result.rows.length === 0) {
-            return res.status(400).json({ message: 'Correo no encontrado' });
+            // 🛑 Sugerencia 2: Usar un mensaje genérico para evitar dar pistas a atacantes
+            return res.status(401).json({ message: 'Credenciales inválidas' }); 
         }
 
         const user = result.rows[0];
         const isMatch = await bcrypt.compare(contra, user.contra);
-
+        
+        // 2. Verificación de la Contraseña
         if (!isMatch) {
-            return res.status(400).json({ message: 'Contraseña incorrecta' });
+            // 🛑 Sugerencia 2: Usar 401 y el mismo mensaje genérico que arriba
+            return res.status(401).json({ message: 'Credenciales inválidas' });
         }
 
-        // Objeto de respuesta limpio, sin la contraseña hasheada
+        // Objeto de respuesta limpio (Asegúrate de que 'imagen' exista si la usas en el frontend)
         const userResponse = {
             id: user.id,
             nombre: user.nombre, 
@@ -84,6 +88,8 @@ router.post('/iniciar-sesion', async (req, res) => {
             rol: user.rol,
             pais: user.pais,
             celular: user.celular,
+            // 👈 Asegúrate de incluir 'imagen' si la necesitas en el frontend
+            imagen: user.imagen_url || null, 
         };
 
         const token = jwt.sign(
@@ -92,7 +98,8 @@ router.post('/iniciar-sesion', async (req, res) => {
             { expiresIn: '1h' } 
         );
 
-        res.status(200).json({ token, user: userResponse });
+        // Envío de la respuesta exitosa
+        return res.status(200).json({ token, user: userResponse });
     } catch (error) {
         console.error('Error al iniciar sesión:', error);
         return res.status(500).json({ message: 'Error del servidor' });
