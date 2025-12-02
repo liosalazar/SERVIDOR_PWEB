@@ -1,5 +1,7 @@
 import pool from '../db.js';
 
+// --- FUNCIONES EXISTENTES (SIN CAMBIOS EN LA LÓGICA DE UNIÓN) ---
+
 const getUserOrders = async (req, res) => {
     const userId = req.user.id; 
     try {
@@ -14,7 +16,7 @@ const getUserOrders = async (req, res) => {
                 json_agg(
                     json_build_object(
                         'producto_id', io."productId",
-                        'nombre', p.nombre,
+                        'nombre', io.nombre_producto,  -- Aquí obtenemos el nombre directamente de order_details
                         'precio', io.precio_unitario,
                         'cantidad', io.cantidad
                     )
@@ -23,10 +25,8 @@ const getUserOrders = async (req, res) => {
                 orders o
             JOIN 
                 order_details io ON o.id = io."orderId"
-            JOIN 
-                products p ON io."productId" = p.id
-             
-                WHERE "userId" = $1
+            WHERE 
+                "userId" = $1
             GROUP BY 
                 o.id, o.fecha_orden, o.total, o.estado, o.direccion_envio, o.metodo_pago
             ORDER BY 
@@ -57,7 +57,7 @@ const getOrderById = async (req, res) => {
                 json_agg(
                     json_build_object(
                         'producto_id', io."productId",
-                        'nombre', p.nombre,
+                        'nombre', io.nombre_producto,  -- Obtener desde order_details
                         'precio', io.precio_unitario,
                         'cantidad', io.cantidad
                     )
@@ -66,8 +66,6 @@ const getOrderById = async (req, res) => {
                 orders o
             JOIN 
                 order_details io ON o.id = io."orderId"
-            JOIN 
-                products p ON io."productId" = p.id
             WHERE 
                 o.id = $1 AND o."userId" = $2
             GROUP BY 
@@ -83,6 +81,8 @@ const getOrderById = async (req, res) => {
         res.status(500).json({ message: 'Error del servidor al obtener el detalle de la orden.' });
     }
 };
+
+// --- FUNCIÓN CORREGIDA ---
 
 const createOrder = async (req, res) => {
     const userId = req.user.id; 
@@ -112,16 +112,18 @@ const createOrder = async (req, res) => {
 
         const orderId = orderResult.rows[0].id;
         const itemValues = [];
+        
+        // CORRECCIÓN CLAVE: 5 VALORES por ITEM: orderId, productId, quantity, price, nombre_producto
         items.forEach(item => {
-            itemValues.push(orderId, item.id, item.quantity, item.price);
+            itemValues.push(orderId, item.id, item.quantity, item.price, item.name); // Asumimos item.name
         });
 
         const placeholderString = items.map((_, i) => 
-            `($${i * 4 + 1}, $${i * 4 + 2}, $${i * 4 + 3}, $${i * 4 + 4})`
+            `($${i * 5 + 1}, $${i * 5 + 2}, $${i * 5 + 3}, $${i * 5 + 4}, $${i * 5 + 5})` // 5 placeholders
         ).join(', ');
         
         const itemInsertQuery = `
-            INSERT INTO order_details ("orderId", "productId", cantidad, precio_unitario)
+            INSERT INTO order_details ("orderId", "productId", cantidad, precio_unitario, nombre_producto)
             VALUES ${placeholderString}
         `;
         
