@@ -164,6 +164,7 @@ const getAdminOrderDetail = async (req, res) => {
     const { id } = req.params;
 
     try {
+        // Obtener información de la orden y del usuario
         const orderResult = await pool.query(
             `SELECT 
                 o.id, o.fecha_orden, o.total, o.estado, o.direccion_envio, o.metodo_pago,
@@ -178,8 +179,9 @@ const getAdminOrderDetail = async (req, res) => {
         }
         const order = orderResult.rows[0];
 
+        // Obtener los ítems de la orden (usando order_details y sus columnas directas)
         const itemsResult = await pool.query(
-            'SELECT nombre_producto, precio_unitario, cantidad FROM order_details WHERE "orderId" = $1', 
+            'SELECT nombre_producto, precio_unitario, cantidad, "productId" FROM order_details WHERE "orderId" = $1', 
             [id]
         );
         
