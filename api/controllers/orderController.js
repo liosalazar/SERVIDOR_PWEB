@@ -1,109 +1,109 @@
 // api/controllers/orderController.js
 import pool from '../db.js';
 
-// @desc    Obtener todas las órdenes del usuario autenticado
-// @route   GET /api/orders
-// @access  Private (Requiere token)
+// @desc    Obtener todas las órdenes del usuario autenticado
+// @route   GET /api/orders
+// @access  Private (Requiere token)
 const getUserOrders = async (req, res) => {
-    // El ID del usuario se obtiene de req.user, que fue adjuntado por verifyToken (middleware)
-    const userId = req.user.id; 
+    // El ID del usuario se obtiene de req.user, que fue adjuntado por verifyToken (middleware)
+    const userId = req.user.id; 
 
-    try {
-        // Consulta SQL: Obtener órdenes y agrupar los ítems de cada orden en un JSON
-        const query = `
-            SELECT 
-                o.id, 
-                o.fecha_creacion AS fecha, 
-                o.total_orden AS total, 
-                o.estado,
-                o.direccion_envio AS direccion, 
+    try {
+        // Consulta SQL: Obtener órdenes y agrupar los ítems de cada orden en un JSON
+        const query = `
+            SELECT 
+                o.id, 
+                o.fecha_orden AS fecha, 
+                o.total AS total, 
+                o.estado,
+                o.direccion_envio AS direccion, 
                 o.metodo_pago AS "metodoPago",
-                json_agg(
-                    json_build_object(
-                        'producto_id', io.producto_id,
-                        'nombre', p.nombre,
-                        'precio', io.precio_unitario,
-                        'cantidad', io.cantidad
-                    )
-                ) AS productos
-            FROM 
-                ordenes o
-            JOIN 
-                items_orden io ON o.id = io.orden_id
-            JOIN 
-                productos p ON io.producto_id = p.id
-            WHERE 
-                o.usuario_id = $1
-            GROUP BY 
-                o.id, o.fecha_creacion, o.total_orden, o.estado, o.direccion_envio, o.metodo_pago
-            ORDER BY 
-                o.fecha_creacion DESC;
-        `;
-        
-        const result = await pool.query(query, [userId]);
+                json_agg(
+                    json_build_object(
+                        'producto_id', io.producto_id,
+                        'nombre', p.nombre,
+                        'precio', io.precio_unitario,
+                        'cantidad', io.cantidad
+                    )
+                ) AS productos
+            FROM 
+                orders o
+            JOIN 
+                items_orden io ON o.id = io.orden_id
+            JOIN 
+                productos p ON io.producto_id = p.id
+             
+                WHERE "userId" = $1
+            GROUP BY 
+                o.id, o.fecha_orden, o.total, o.estado, o.direccion_envio, o.metodo_pago;
+            ORDER BY 
+                o.fecha_orden DESC;
+        `;
+        
+        const result = await pool.query(query, [userId]);
 
-        res.status(200).json(result.rows); 
+        res.status(200).json(result.rows); 
 
-    } catch (error) {
-        console.error('Error al obtener órdenes:', error);
-        res.status(500).json({ message: 'Error del servidor al obtener las órdenes.' });
-    }
+    } catch (error) {
+        console.error('Error al obtener órdenes:', error);
+        res.status(500).json({ message: 'Error del servidor al obtener las órdenes.' });
+    }
 };
 
-// @desc    Obtener una orden específica por ID
-// @route   GET /api/orders/:id
-// @access  Private (Requiere token)
+// @desc    Obtener una orden específica por ID
+// @route   GET /api/orders/:id
+// @access  Private (Requiere token)
 const getOrderById = async (req, res) => {
-    const userId = req.user.id;
-    const orderId = req.params.id;
+    const userId = req.user.id;
+    const orderId = req.params.id;
 
-    try {
-        const query = `
-            SELECT 
-                o.id, 
-                o.fecha_creacion AS fecha, 
-                o.total_orden AS total, 
-                o.estado,
-                o.direccion_envio AS direccion, 
+    try {
+        const query = `
+            SELECT 
+                o.id, 
+                o.fecha_orden AS fecha, 
+                o.total AS total, 
+                o.estado,
+                o.direccion_envio AS direccion, 
                 o.metodo_pago AS "metodoPago",
-                json_agg(
-                    json_build_object(
-                        'producto_id', io.producto_id,
-                        'nombre', p.nombre,
-                        'precio', io.precio_unitario,
-                        'cantidad', io.cantidad
-                    )
-                ) AS productos
-            FROM 
-                ordenes o
-            JOIN 
-                items_orden io ON o.id = io.orden_id
-            JOIN 
-                productos p ON io.producto_id = p.id
-            WHERE 
-                o.id = $1 AND o.usuario_id = $2
-            GROUP BY 
-                o.id, o.fecha_creacion, o.total_orden, o.estado, o.direccion_envio, o.metodo_pago;
-        `;
-        
-        const result = await pool.query(query, [orderId, userId]);
+                json_agg(
+                    json_build_object(
+                        'producto_id', io.producto_id,
+                        'nombre', p.nombre,
+                        'precio', io.precio_unitario,
+                        'cantidad', io.cantidad
+                    )
+                ) AS productos
+            FROM 
+                orders o
+            JOIN 
+                items_orden io ON o.id = io.orden_id
+            JOIN 
+                productos p ON io.producto_id = p.id
+            WHERE 
+                o.id = $1 AND o."userId" = $2
+            GROUP BY 
+                o.id, o.fecha_orden, o.total, o.estado, o.direccion_envio, o.metodo_pago;
+        `;
+        
+        const result = await pool.query(query, [orderId, userId]);
 
-        if (result.rows.length === 0) {
-            return res.status(404).json({ message: 'Orden no encontrada o no pertenece a este usuario.' });
-        }
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'Orden no encontrada o no pertenece a este usuario.' });
+        }
 
-        res.status(200).json(result.rows[0]);
-    } catch (error) {
-        console.error('Error al obtener el detalle de la orden:', error);
-        res.status(500).json({ message: 'Error del servidor al obtener el detalle de la orden.' });
-    }
+        res.status(200).json(result.rows[0]);
+    } catch (error) {
+        console.error('Error al obtener el detalle de la orden:', error);
+        res.status(500).json({ message: 'Error del servidor al obtener el detalle de la orden.' });
+    }
 };
 
 // --- FUNCIÓN DE CREACIÓN DE ÓRDENES ---
 
-// @desc    Crear una nueva orden
-// @route   POST /api/orders
-// @access  Private (Requiere token)
+// @desc    Crear una nueva orden
+// @route   POST /api/orders
+// @access  Private (Requiere token)
 const createOrder = async (req, res) => {
     const userId = req.user.id; 
     
@@ -123,9 +123,9 @@ const createOrder = async (req, res) => {
 
         // 2a. Crear la ORDEN principal
         const orderQuery = `
-            INSERT INTO ordenes (usuario_id, total_orden, estado, direccion_envio, metodo_pago)
+            INSERT INTO orders ("userId", total, estado, direccion_envio, metodo_pago)
             VALUES ($1, $2, $3, $4, $5)
-            RETURNING id, total_orden;
+            RETURNING id, total;
         `;
         const orderResult = await client.query(orderQuery, [
             userId, 
@@ -162,7 +162,7 @@ const createOrder = async (req, res) => {
         res.status(201).json({
             message: 'Orden creada exitosamente',
             orderId: orderId, // Devolver el ID de la nueva orden
-            total: orderResult.rows[0].total_orden,
+            total: orderResult.rows[0].total,
         });
 
     } catch (error) {
